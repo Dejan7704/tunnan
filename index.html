@@ -79,6 +79,9 @@ p{margin:0}
 .spots{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .spot{background:#fff;border:2px solid #eadfcb;text-align:left;font-weight:800;font-size:14px;line-height:1.2;min-height:58px;position:relative;overflow:hidden;padding:8px 10px}
 .spot small{display:block;font-weight:700;color:var(--mut);font-size:12px;margin-top:3px}
+.spot.done{background:#f1ebe1;color:#9a9188;border-style:dashed}
+.spot.done small{color:#9a9188}
+.sheet.out .hd svg{filter:grayscale(1);opacity:.6}
 .spot i{position:absolute;left:0;bottom:0;height:5px;width:0;background:var(--falu)}
 .spot.go i{transition:width 2s linear;width:100%}
 .bar{display:flex;gap:8px}
@@ -132,6 +135,7 @@ hr{border:0;border-top:2px dashed #e3d8c4;margin:4px 0;width:100%}
  <symbol id="i-tunna" viewBox="0 0 32 32"><path d="M8 5Q5 16 8 27h16q3-11 0-22z" fill="#a8702f" stroke="#5a3712" stroke-width="1.3"/><path d="M6.6 11h18.8M6.6 21h18.8" stroke="#3c3f44" stroke-width="2.2"/><path d="M13 6Q12 16 13 26M19 6Q20 16 19 26" stroke="#7a4d1d" stroke-width=".8" fill="none"/><ellipse cx="16" cy="5" rx="8" ry="2" fill="#c98f4a" stroke="#5a3712"/></symbol>
  <symbol id="i-sprit" viewBox="0 0 32 32"><rect x="13" y="2" width="6" height="6" rx="1" fill="#2c6b2f" stroke="#123a14"/><path d="M13 8Q9 11 9 15v13q0 2 2 2h10q2 0 2-2V15q0-4-4-7z" fill="#4caf50" stroke="#1d5a20" stroke-width="1.2"/><rect x="11" y="16" width="10" height="8" rx="1.5" fill="#fff6c9"/><path d="M13.5 22l1-4 1.5 3 1.5-3 1 4" fill="none" stroke="#1d5a20" stroke-width="1.2"/></symbol>
  <symbol id="i-mys" viewBox="0 0 32 32"><path d="M16 2.5l3.4 8.6 9.1.4-7.1 5.8 2.4 8.9L16 21.1l-7.8 5.1 2.4-8.9-7.1-5.8 9.1-.4z" fill="#f3c13a" stroke="#8a6410" stroke-width="1.3" stroke-linejoin="round"/><text x="16" y="20" text-anchor="middle" font-family="Lilita One,sans-serif" font-size="11" fill="#5a3712">?</text></symbol>
+ <symbol id="i-mon" viewBox="0 0 48 60"><ellipse cx="24" cy="57" rx="15" ry="3" fill="#000" opacity=".25"/><rect x="15" y="49" width="5" height="8" rx="2" fill="#2b1a0e"/><rect x="28" y="49" width="5" height="8" rx="2" fill="#2b1a0e"/><path d="M8 29q-7 1-6 9M40 29q7 1 6 9" stroke="#3b230f" stroke-width="2.6" fill="none" stroke-linecap="round"/><path d="M10 12Q5 31 10 52h28q5-21 0-40z" fill="#8a5a2b" stroke="#3b230f" stroke-width="1.6"/><path d="M17 13Q15 31 17 51M31 13Q33 31 31 51M24 12v40" stroke="#5e3a18" stroke-width="1" fill="none"/><path d="M7.6 19h32.8M7.5 45h33" stroke="#3c3f44" stroke-width="3"/><path d="M19 11q1-9 8-8l4-3 1 6-4 1q-4 1-6 5z" fill="#b9c4cc" stroke="#55626b" stroke-width=".8"/><ellipse cx="24" cy="12" rx="14" ry="3.5" fill="#a87440" stroke="#3b230f" stroke-width="1.4"/><ellipse cx="18" cy="27" rx="4" ry="4.6" fill="#fff"/><ellipse cx="30" cy="27" rx="4" ry="4.6" fill="#fff"/><circle cx="19" cy="28" r="2.1" fill="#c41e1e"/><circle cx="29" cy="28" r="2.1" fill="#c41e1e"/><path d="M13 21l8 3.5M35 21l-8 3.5" stroke="#1d120a" stroke-width="2.2" stroke-linecap="round"/><path d="M14.5 34q9.5 8 19 0q-9.5 4.5-19 0z" fill="#2a0d0d"/><path d="M17 35.2l1.6 2.6 1.6-2.1M22.4 36.2l1.6 2.7 1.6-2.7M27.8 35.8l1.6 2.4 1.6-2.7" fill="#fff"/></symbol>
  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16" stroke="#1d2a30" stroke-width="2.6" stroke-linecap="round"/></symbol>
  <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M7 4h10v5a5 5 0 0 1-10 0z" fill="#e6c66e" stroke="#7a5a12" stroke-width="1.4"/><path d="M7 6H4a3 3 0 0 0 3 4M17 6h3a3 3 0 0 1-3 4M12 14v4M8 20h8" fill="none" stroke="#7a5a12" stroke-width="1.6" stroke-linecap="round"/></symbol>
  <symbol id="h-red" viewBox="0 0 10 10"><path d="M1 4.5L5 1l4 3.5v5H1z" fill="#a8382b" stroke="#6d2117" stroke-width=".4"/><path d="M.4 4.9L5 .8l4.6 4.1" fill="none" stroke="#e6c66e" stroke-width=".8"/><rect x="4" y="6" width="2" height="3.5" fill="#fff"/></symbol>
@@ -150,7 +154,7 @@ hr{border:0;border-top:2px dashed #e3d8c4;margin:4px 0;width:100%}
  <symbol id="s-kajak" viewBox="0 0 40 40"><path d="M3 24q17 6 34 0-17-6-34 0z" fill="#e8822a" stroke="#9a4d10" stroke-width=".8"/><ellipse cx="20" cy="23.5" rx="4" ry="1.6" fill="#333"/><path d="M8 12l24 22" stroke="#555" stroke-width="1.6"/><path d="M6 10l4 1-1 4zM34 36l-4-1 1-4z" fill="#f3c13a" stroke="#555" stroke-width=".6"/><path d="M2 32q3-2 6 0t6 0 6 0 6 0 6 0 6 0" fill="none" stroke="#5d8fb0" stroke-width="1.6"/></symbol>
 </defs></svg>
 
-<svg id="map" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 822"><g id="base"></g><polyline id="routeL" fill="none" stroke="#e6c66e" stroke-width="4" stroke-dasharray="2 7" stroke-linecap="round" vector-effect="non-scaling-stroke"/><g id="itemsL"></g><g id="placesL"></g><g id="playersL"></g><g id="fx"></g></svg>
+<svg id="map" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 822"><g id="base"></g><polyline id="routeL" fill="none" stroke="#e6c66e" stroke-width="4" stroke-dasharray="2 7" stroke-linecap="round" vector-effect="non-scaling-stroke"/><g id="itemsL"></g><g id="placesL"></g><g id="monL"><g id="monG" style="display:none"><use href="#i-mon" x="-22" y="-46" width="44" height="55"/></g></g><g id="playersL"></g><g id="fx"></g></svg>
 
 <div id="hud" hidden>
  <div class="chip" id="meChip"><span class="av" id="meAv" style="--s:38px"></span><div><div class="sc" id="meSc">0 p</div><div class="cnt" id="meCnt"></div></div></div>
@@ -205,6 +209,7 @@ hr{border:0;border-top:2px dashed #e3d8c4;margin:4px 0;width:100%}
   <div class="rule"><svg><use href="#i-tunna"/></svg><span><b>10 p</b> Silltunna, 8 st. Gömda på platserna.</span></div>
   <div class="rule"><svg><use href="#i-kraft"/></svg><span><b>4 p</b> Kräfta, 20 st.</span></div>
   <div class="rule"><svg><use href="#i-raka"/></svg><span><b>2 p</b> Räka, 40 st. Ligger också längs vägarna.</span></div>
+  <div class="rule"><svg viewBox="0 0 48 60"><use href="#i-mon"/></svg><span><b>Tunnan-monstret</b> strövar runt på ön. Går du på det somnar du i 10 sekunder. Ibland försvinner det i ett poff och dyker upp någon annanstans!</span></div>
   <div class="rule"><svg><use href="#i-sprit"/></svg><span><b>Mygg-sprit</b> finns bara på genvägarna. Kasta den på någon så somnar hen i 20 sekunder.</span></div>
  </div>
  <p class="mut">Längs vägarna syns bara gula stjärnor. Vad som gömmer sig där får du veta först när du går på dem! Nya skatter dyker upp under spelets gång. Tryck på en plats eller en vit prick på kartan för att gå dit.</p>
@@ -405,7 +410,7 @@ const G={
  players(p){PL=p||{};gotPlayers=true;BOTS=BOTS.filter(id=>PL[id]);updateScreens();renderLobby();dirty.sheet=true},
  avatars(a){AV=a||{};for(const id in PEL)PEL[id].face=null;renderLobby();renderMe()},
  claims(c){CL=c||{};stats();dirty.items=dirty.places=dirty.sheet=true;checkEnd()},
- events(list,full){if(full){const keep=new Map();for(const e of list){keep.set(e.id,e);if(!EVS.has(e.id))onEvent(e)}EVS=keep}else for(const e of list){if(!EVS.has(e.id)){EVS.set(e.id,e);onEvent(e)}}stats()}
+ events(list,full){if(full){const keep=new Map();MON=[];for(const e of list){keep.set(e.id,e);if(e.ty==='mon')monAdd(e);if(!EVS.has(e.id))onEvent(e)}EVS=keep}else for(const e of list){if(!EVS.has(e.id)){EVS.set(e.id,e);if(e.ty==='mon')monAdd(e);onEvent(e)}}stats()}
 };
 function stats(){ST={};const g=id=>ST[id]||(ST[id]={score:0,k:0,r:0,t:0,s:0,thrown:0});
  const byId={};for(const it of ITEMS)byId[it.id]=it;
@@ -444,6 +449,11 @@ const SND={ctx:null,out:null,on:ls.get('tunnan-snd')!=='0',
  sad(){if(!this.ok())return;const c=this.ctx,lp=c.createBiquadFilter();lp.type='lowpass';lp.frequency.value=1100;lp.connect(this.out);let t=c.currentTime+.02;
   for(const[f,d]of[[392,.32],[370,.32],[349,.32],[330,1]]){const g=c.createGain();g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.16,t+.03);g.gain.setValueAtTime(.16,t+d-.06);g.gain.exponentialRampToValueAtTime(.0001,t+d);g.connect(lp);const o=c.createOscillator();o.type='sawtooth';o.frequency.setValueAtTime(f,t);
    if(d>.5){const l=c.createOscillator(),lg=c.createGain();l.frequency.value=5.5;lg.gain.value=9;l.connect(lg);lg.connect(o.frequency);l.start(t+.15);l.stop(t+d);o.frequency.linearRampToValueAtTime(f*.94,t+d)}o.connect(g);o.start(t);o.stop(t+d+.02);t+=d}},
+ noise(t,d,v,f){const c=this.ctx,b=c.createBuffer(1,Math.ceil(c.sampleRate*d),c.sampleRate),a=b.getChannelData(0);for(let i=0;i<a.length;i++)a[i]=(Math.random()*2-1)*(1-i/a.length);const s=c.createBufferSource();s.buffer=b;const lp=c.createBiquadFilter();lp.type='lowpass';lp.frequency.setValueAtTime(f,t);lp.frequency.exponentialRampToValueAtTime(200,t+d);s.connect(lp);lp.connect(this.env(t,.005,d,v));s.start(t)},
+ poff(){if(!this.ok())return;const t=this.ctx.currentTime+.02;this.noise(t,.35,.5,2400);const o=this.osc('sine',220,t,.2,this.env(t,.003,.18,.25));o.frequency.exponentialRampToValueAtTime(60,t+.18)},
+ laugh(){if(!this.ok())return;const c=this.ctx;let t=c.currentTime+.05;const bp=c.createBiquadFilter();bp.type='bandpass';bp.frequency.value=750;bp.Q.value=2.5;bp.connect(this.out);
+  for(let i=0;i<6;i++){const f=210-i*14,d=i===5?.5:.13,g=c.createGain();g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.5,t+.02);g.gain.exponentialRampToValueAtTime(.0001,t+d);g.connect(bp);const o=c.createOscillator();o.type='sawtooth';o.frequency.setValueAtTime(f*1.15,t);o.frequency.exponentialRampToValueAtTime(f*.85,t+d);o.connect(g);o.start(t);o.stop(t+d+.02);t+=i===4?.2:.16}
+  const g=this.env(c.currentTime+.05,.2,1.3,.12);this.osc('sine',55,c.currentTime+.05,1.5,g)},
  snore(){if(!this.ok())return;const t=this.ctx.currentTime+.02,o=this.osc('triangle',110,t,1.2,this.env(t,.25,.9,.18));o.frequency.linearRampToValueAtTime(70,t+1.1)}
 };
 for(const ev of['pointerdown','touchend','keydown'])document.addEventListener(ev,()=>SND.unlock(),{capture:true,passive:true});
@@ -452,6 +462,7 @@ for(const ev of['pointerdown','touchend','keydown'])document.addEventListener(ev
 function onEvent(e){if(!e||(+e.t)<joinT-3000)return;
  if(e.ty==='hit'){throwFx(e.p,e.q);if(e.q===me){SND.snore();try{navigator.vibrate&&navigator.vibrate([200,80,200])}catch(x){}}
   toast(`<svg><use href="#i-sprit"/></svg><span><b>${esc(nameOf(e.p))}</b> sövde <b>${esc(nameOf(e.q))}</b> med mygg-sprit!</span>`)}
+ else if(e.ty==='mhit'){if(e.q===me){SND.laugh();try{navigator.vibrate&&navigator.vibrate([300])}catch(x){}}toast(`<svg viewBox="0 0 48 60"><use href="#i-mon"/></svg><span>Tunnan-monstret tog <b>${esc(nameOf(e.q))}</b>! Zzz…</span>`)}
  else if(e.ty==='find'&&e.p!==me)toast(`<svg><use href="#i-tunna"/></svg><span><b>${esc(nameOf(e.p))}</b> hittade en silltunna vid ${esc(e.pl)}!</span>`)}
 function toast(html,cls){const el=document.createElement('div');el.className='toast '+(cls||'');el.innerHTML=html;const box=$('#toasts');box.prepend(el);while(box.children.length>3)box.lastChild.remove();setTimeout(()=>el.remove(),3800)}
 function setConn(ok){$('#conn').classList.toggle('on',!ok)}
@@ -495,12 +506,12 @@ function applyCam(now){const svg=$('#map');CW=svg.clientWidth||innerWidth;CH=svg
  const mx=60*K;cam.x=cam.w>=MW?(MW-cam.w)/2:Math.min(Math.max(cam.x,-mx),MW-cam.w+mx);cam.y=h>=MH?(MH-h)/2:Math.min(Math.max(cam.y,-mx),MH-h+mx);
  svg.setAttribute('viewBox',`${f1(cam.x)} ${f1(cam.y)} ${f1(cam.w)} ${f1(h)}`);if(Math.abs(K-lastK)/(lastK||1)>.02){lastK=K;dirty.items=dirty.places=true}}
 function zoomAt(px,py,w){const r=$('#map').getBoundingClientRect(),wx=cam.x+(px-r.left)*K,wy=cam.y+(py-r.top)*K;cam.w=w;const k2=Math.min(Math.max(w,200),Math.max(MW*1.15,MH*1.15*CW/CH))/CW;cam.x=wx-(px-r.left)*k2;cam.y=wy-(py-r.top)*k2}
-function dispPos(p,now){const m=p.m||startM();if(p.z&&p.z.s>now){const hit=p.z.s-SLEEP;if((m.t0||0)<hit)return posAt(m,hit)}return posAt(m,now)}
+function dispPos(p,now){const m=p.m||startM();if(p.z&&p.z.s>now){const hit=p.z.s-(p.z.d||SLEEP);if((m.t0||0)<hit)return posAt(m,hit)}return posAt(m,now)}
 let dirty={items:true,places:true,sheet:true},waveKey='';
 function renderItems(now){let h='';for(const it of MAPIT){if(CL[it.id]||!released(it,now))continue;h+=`<g transform="translate(${f1(it.x)},${f1(it.y)}) scale(${K.toFixed(3)})"><circle r="11" fill="#fffaf1" stroke="#8a6410" stroke-width="1.5" opacity=".92"/><use href="#i-mys" x="-10" y="-10" width="20" height="20"/></g>`}$('#itemsL').innerHTML=h}
 function renderPlaces(now){let h='';const hint=hintOn(now);for(const id in NODES){const n=NODES[id];if(!n.place)h+=`<circle cx="${f1(n.x)}" cy="${f1(n.y)}" r="${f1(4.5*K)}" fill="#fff" stroke="#1d2a30" stroke-width="${f1(1.5*K)}"/>`}
  for(const p of PLACES){const n=NODES[p.id];let badge='';if(hint){const c=HID.filter(it=>it.pl===p.id&&!CL[it.id]&&released(it,now)).length;if(c)badge=`<g transform="translate(16,-16)"><circle r="10" fill="#e6c66e" stroke="#1d2a30" stroke-width="1.5"/><text y="4.5" text-anchor="middle" font-size="13" font-weight="900" font-family="Nunito">${c}</text></g>`}
-  h+=`<g transform="translate(${f1(n.x)},${f1(n.y)}) scale(${K.toFixed(3)})"><circle r="19" fill="#fffaf1" stroke="#a8382b" stroke-width="3"/><use href="#${p.s}" x="-15" y="-16" width="30" height="30"/><text class="lbl" y="34" text-anchor="middle">${esc(p.n)}</text>${badge}</g>`}
+  const off=META&&META.status==='running'&&allSearched(p.id);h+=`<g transform="translate(${f1(n.x)},${f1(n.y)}) scale(${K.toFixed(3)})"${off?' opacity=".5" filter="url(#gray)"':''}><circle r="19" fill="#fffaf1" stroke="#a8382b" stroke-width="3"/><use href="#${p.s}" x="-15" y="-16" width="30" height="30"/><text class="lbl" y="34" text-anchor="middle">${esc(p.n)}</text>${badge}</g>`}
  $('#placesL').innerHTML=h}
 const PEL={};
 function renderPlayers(now){const L=$('#playersL'),ids=Object.keys(PL);for(const id in PEL)if(!PL[id]){PEL[id].g.remove();delete PEL[id]}
@@ -514,16 +525,60 @@ function renderPlayers(now){const L=$('#playersL'),ids=Object.keys(PL);for(const
 function throwFx(a,b){const A=PL[a],B=PL[b];if(!A||!B)return;const now=T(),p=dispPos(A,now),q=dispPos(B,now),fx=$('#fx');const g=document.createElementNS(NS,'g');g.innerHTML=`<use href="#i-sprit" x="-11" y="-11" width="22" height="22"/>`;fx.appendChild(g);const t0=performance.now();
  const step=t=>{const f=Math.min(1,(t-t0)/700);const x=p.x+(q.x-p.x)*f,y=p.y+(q.y-p.y)*f-Math.sin(f*Math.PI)*60*K;g.setAttribute('transform',`translate(${f1(x)},${f1(y)}) rotate(${f*540}) scale(${K.toFixed(3)})`);if(f<1)requestAnimationFrame(step);else{g.innerHTML=`<circle r="10" fill="#7bd36b" opacity=".8"><animate attributeName="r" from="8" to="40" dur=".5s" fill="freeze"/><animate attributeName="opacity" from=".8" to="0" dur=".5s" fill="freeze"/></circle>`;g.setAttribute('transform',`translate(${f1(q.x)},${f1(q.y)}) scale(${K.toFixed(3)})`);setTimeout(()=>g.remove(),600)}};requestAnimationFrame(step)}
 
+/* ===== Genomsökta ställen (per spelare, nollställs vid varje ny våg) ===== */
+let SRCH={k:null,v:{}};
+const curWave=t=>META&&META.startAt?[0,.2,.4,.6,.8].filter(w=>t>=META.startAt+w*META.dur*60000).length:0;
+function searchedSet(){const k='tunnan-s-'+GID+'-'+itemSeed+'-'+curWave(T());if(SRCH.k!==k){let v={};try{v=JSON.parse(ls.get(k))||{}}catch(e){}SRCH={k,v}}return SRCH.v}
+function markSearched(pl,sp){const v=searchedSet();(v[pl]=v[pl]||[]);if(!v[pl].includes(sp))v[pl].push(sp);ls.set(SRCH.k,JSON.stringify(v));dirty.places=true;sheetKey=''}
+const allSearched=pl=>(searchedSet()[pl]||[]).length>=4;
+
+/* ===== Tunnan-monstret ===== */
+// Monstrets rörelse är "planer" som sparas som händelser, så alla mobiler ser samma monster.
+const MSP=11,MGRACE=1500,MOFF=5000;let MON=[],monPending=0,monVisPrev=null;const monFx={appearAt:0};
+function monAdd(e){let p;try{p=typeof e.pl==='string'?JSON.parse(e.pl):e.pl}catch(x){return}if(!p||typeof p.n!=='number')return;p.id=e.id;const ex=MON.find(q=>q.n===p.n&&q.s===p.s);if(ex){if(ex.id<=p.id)return;MON=MON.filter(q=>q!==ex)}MON.push(p);MON.sort((a,b)=>a.n-b.n)}
+const monPlans=()=>META?MON.filter(p=>p.s===META.seed):[];
+function planLen(p){let L=0,prev=p.f;for(const n of p.r){L+=hyp(NODES[prev].x,NODES[prev].y,NODES[n].x,NODES[n].y);prev=n}return L}
+const planEnd=p=>p.k==='w'?p.t0+planLen(p)/MSP*1000:p.t1;
+const planEndNode=p=>p.k==='w'?(p.r.length?p.r[p.r.length-1]:p.f):p.to;
+function monAt(t){const P=monPlans();let cur=null;for(const p of P){if(p.t0<=t)cur=p;else break}if(!cur)return null;
+ if(cur.k==='w'){const m={sx:NODES[cur.f].x,sy:NODES[cur.f].y,route:cur.r,t0:cur.t0,sp:MSP},q=posAt(m,t);return{x:q.x,y:q.y,vis:true,since:t-(cur.ap||0),moving:!q.done}}
+ if(t<cur.t1){const a=cur.at&&NODES[cur.at];return{x:a?a.x:0,y:a?a.y:0,vis:false}}
+ const n=NODES[cur.to];return{x:n.x,y:n.y,vis:true,since:t-cur.t1,moving:false}}
+function monAppearNode(t,avoid){const now=T();let best=null,bs=-1;const ok=[];
+ for(const id in NODES){if(id===avoid)continue;const n=NODES[id];let sc=1e9;for(const pid in PL){const m=PL[pid].m||startM();const a=posAt(m,now),b=posAt(m,t);sc=Math.min(sc,hyp(n.x,n.y,a.x,a.y),hyp(n.x,n.y,b.x,b.y))}
+  if(sc>95)ok.push(id);if(sc>bs){bs=sc;best=id}}
+ return ok.length?ok[Math.floor(Math.random()*ok.length)]:best}
+function monWalk(from){const r=[];let prev=null,cur=from;const hops=2+Math.floor(Math.random()*4);for(let i=0;i<hops;i++){let nb=ADJ[cur].map(a=>a.to).filter(x=>x!==prev);if(!nb.length)nb=ADJ[cur].map(a=>a.to);const nx=nb[Math.floor(Math.random()*nb.length)];r.push(nx);prev=cur;cur=nx}return r}
+function monTick(now){const P=monPlans(),last=P[P.length-1];const due=last?planEnd(last)-1500:META.startAt+4000;
+ const delay=LEADER?0:2500+[...(me||'x')].reduce((a,c)=>a+c.charCodeAt(0),0)%2500;if(now<due+delay)return;if(now-monPending<5000)return;monPending=now;
+ let p;const n=last?last.n+1:1,s=META.seed;
+ if(!last){const t1=Math.max(now+1500,META.startAt+8000);p={s,n,k:'p',at:null,to:monAppearNode(t1,START),t0:now,t1}}
+ else if(last.k==='p'){p={s,n,k:'w',f:last.to,r:monWalk(last.to),t0:last.t1,ap:last.t1}}
+ else{const t0=Math.max(planEnd(last),now-500),at=planEndNode(last);if(Math.random()<.35){const t1=t0+MOFF;p={s,n,k:'p',at,to:monAppearNode(t1,at),t0,t1}}else p={s,n,k:'w',f:at,r:monWalk(at),t0,ap:last.ap||0}}
+ net.event({ty:'mon',pl:JSON.stringify(p),t:now})}
+function checkMonster(now,M){if(!M||!M.vis||M.since<MGRACE)return;for(const id of controlled()){const p=PL[id];if(!p||asleep(p,now)||(p.z&&p.z.i>now))continue;const q=dispPos(p,now);
+ if(hyp(q.x,q.y,M.x,M.y)<11){const z={s:now+10000,i:now+18000,by:'monster',d:10000};p.z=z;net.updatePlayer(id,{z});net.event({ty:'mhit',q:id,t:now})}}}
+function inView(x,y){const h=CH*K;return x>cam.x-40*K&&x<cam.x+cam.w+40*K&&y>cam.y-40*K&&y<cam.y+h+40*K}
+function smoke(x,y){const g=document.createElementNS(NS,'g');g.setAttribute('transform',`translate(${f1(x)},${f1(y-14*K)}) scale(${K.toFixed(3)})`);
+ g.innerHTML=[[-10,-4],[9,-6],[0,-14],[-6,8],[8,7],[0,0]].map(([a,b],i)=>`<circle cx="${a}" cy="${b}" r="6" fill="#d9d6d0" stroke="#9a958d" stroke-width="1"><animate attributeName="r" from="5" to="${15+i}" dur=".7s" fill="freeze"/><animate attributeName="opacity" from="1" to="0" dur=".75s" fill="freeze"/></circle>`).join('');$('#fx').appendChild(g);setTimeout(()=>g.remove(),800)}
+function renderMonster(now){const g=$('#monG');const M=(META&&META.status==='running'&&now>=META.startAt)?monAt(now):null;const vis=!!(M&&M.vis);
+ if(M&&monVisPrev!==null&&vis!==monVisPrev){smoke(M.x,M.y);if(inView(M.x,M.y)){if(vis)setTimeout(()=>SND.laugh(),250);else SND.poff()}}
+ monVisPrev=vis;
+ if(!vis){g.style.display='none';return M}
+ const grow=Math.min(1,Math.max(.25,M.since/300)),wob=M.moving?Math.sin(now/110)*8:Math.sin(now/400)*3,hop=M.moving?Math.abs(Math.sin(now/110))*3:0;
+ g.style.display='';g.setAttribute('transform',`translate(${f1(M.x)},${f1(M.y-hop*K)}) scale(${(K*grow).toFixed(3)}) rotate(${wob.toFixed(1)})`);g.setAttribute('opacity',M.since<MGRACE?(.55+.45*Math.abs(Math.sin(now/90))).toFixed(2):'1');return M}
+
 /* ===== Spelloop ===== */
 const lastChk={},warned={};let handledZ={},lastWave=-1,searching=null,endShown=false;
 function checkPickups(pid,now){const p=PL[pid];if(!p||!p.m)return;let t0=Math.max(lastChk[pid]||now,p.m.t0||0,now-120000);lastChk[pid]=now;
  const S2=[];for(let t=t0;t<now;t+=150)S2.push(posAt(p.m,t));S2.push(posAt(p.m,now));
  for(const it of MAPIT){if(CL[it.id]||pend.has(it.id)||!released(it,now))continue;for(const q of S2){if(Math.abs(q.x-it.x)<9&&Math.abs(q.y-it.y)<9&&hyp(q.x,q.y,it.x,it.y)<9){
   if(it.ty==='s'&&st(pid).sprit+(pendSp[pid]||0)>=MAXS){if(pid===me&&!warned[it.id]){warned[it.id]=1;toast('Du kan bara bära 3 mygg-sprit åt gången.')}break}claim(pid,it);break}}}}
-function checkSleep(now){for(const id of controlled()){const p=PL[id],z=p.z;if(!z||!(z.s>now)||handledZ[id]===z.s)continue;handledZ[id]=z.s;const hit=z.s-SLEEP,m=p.m||startM();let ts=Math.min(now,Math.max(m.t0||0,hit));
+function checkSleep(now){for(const id of controlled()){const p=PL[id],z=p.z;if(!z||!(z.s>now)||handledZ[id]===z.s)continue;handledZ[id]=z.s;const hit=z.s-(z.d||SLEEP),m=p.m||startM();let ts=Math.min(now,Math.max(m.t0||0,hit));
   if(!posAt(m,ts).done){const L=locAt(m,ts);const nm={sx:L.x,sy:L.y,se:L.node?-1:L.edge,sn:L.node||null,route:[],t0:ts,sp:SPEED};p.m=nm;net.updatePlayer(id,{m:nm})}if(id===me){searching=null;dirty.sheet=true}}}
 function frame(){const now=T();applyCam(now);
- if(META&&META.status==='running'){if(now>=META.startAt){for(const id of controlled())checkPickups(id,now);checkSleep(now);botsTick(now)}
+ const MM=renderMonster(now);
+ if(META&&META.status==='running'){if(now>=META.startAt){for(const id of controlled())checkPickups(id,now);checkSleep(now);checkMonster(now,MM);botsTick(now);monTick(now)}
   const wi=[0,.2,.4,.6,.8].filter(w=>now>=META.startAt+w*META.dur*60000).length,hk=wi+'|'+hintOn(now);if(hk!==waveKey){waveKey=hk;dirty.items=dirty.places=dirty.sheet=true}
   if(lastWave>=0&&wi>lastWave&&wi>1)toast('Nya skatter har dykt upp på ön!','good');if(now>=META.startAt)lastWave=wi;}
  if(dirty.items){dirty.items=false;renderItems(now)}if(dirty.places){dirty.places=false;renderPlaces(now)}
@@ -538,21 +593,21 @@ function hudTick(now){if(now-hudT<250)return;hudT=now;const on=!!(META&&META.sta
  const el=Math.max(0,now-META.startAt),mm=Math.floor(el/60000),ss=Math.floor(el/1000)%60;$('#clk').textContent=META.status==='ended'?'Slut':now<META.startAt?'Strax…':`${mm}:${String(ss).padStart(2,'0')}`;
  const left=FOOD.filter(it=>!CL[it.id]).length;$('#left').textContent=hintOn(now)?`Slutspurt! ${left} kvar`:`${left} skatter kvar`;
  const c=$('#count'),cd=Math.ceil((META.startAt-now)/1000);if(META.status==='running'&&cd>0&&cd<=5){c.classList.add('on');c.textContent=cd}else if(META.status==='running'&&now-META.startAt<900){c.classList.add('on');c.textContent='Kör!'}else c.classList.remove('on');
- const p=PL[me],sl=asleep(p,now);$('#sleep').classList.toggle('on',!!sl);if(sl){$('#slT').textContent=Math.ceil((p.z.s-now)/1000);$('#slBy').textContent=`${p.z.by&&PL[p.z.by]?PL[p.z.by].name:'Någon'} kastade mygg-sprit på dig!`}
+ const p=PL[me],sl=asleep(p,now);$('#sleep').classList.toggle('on',!!sl);if(sl){$('#slT').textContent=Math.ceil((p.z.s-now)/1000);$('#slBy').textContent=p.z.by==='monster'?'Tunnan-monstret fick tag på dig!':`${p.z.by&&PL[p.z.by]?PL[p.z.by].name:'Någon'} kastade mygg-sprit på dig!`}
  $('#bThrow').disabled=st(me).sprit<1||META.status!=='running';renderSheet(now)}
 let sheetKey='';
 function renderSheet(now){const p=PL[me];if(!p)return;const m=p.m||startM(),L=locAt(m,now),moving=!posAt(m,now).done;let key,html='';
  if(META.status!=='running'){key='x';html=META.status==='ended'?`<div class="hint">Spelet är slut. Öppna topplistan!</div>`:''}
  else if(now<META.startAt){key='wait';html=`<div class="hint">Gör dig redo…</div>`}
- else if(!moving&&L.node&&NODES[L.node].place){const n=NODES[L.node],hint=hintOn(now),left=HID.filter(it=>it.pl===n.id&&!CL[it.id]&&released(it,now)).length;key=[n.id,searching?searching.sp:'-',hint?left:'',dirty.sheet?Math.random():''].join('|');
-  html=`<div class="sheet"><div class="hd"><svg viewBox="0 0 40 40"><use href="#${n.s}"/></svg><div><h3>${esc(n.n)}</h3><p class="mut">${hint?(left?`${left} skatter gömda här just nu`:'Inget kvar här just nu'):'Var vill du leta?'}</p></div></div><div class="spots">${n.spots.map((s,i)=>`<button class="spot${searching&&searching.sp===i?' go':''}" data-sp="${i}"${searching?' disabled':''}>${esc(s)}<small>${searching&&searching.sp===i?'Letar…':'Leta här'}</small><i></i></button>`).join('')}</div></div>`}
+ else if(!moving&&L.node&&NODES[L.node].place){const n=NODES[L.node],hint=hintOn(now),left=HID.filter(it=>it.pl===n.id&&!CL[it.id]&&released(it,now)).length,done=searchedSet()[n.id]||[],all=done.length>=4;key=[n.id,searching?searching.sp:'-',hint?left:'',done.join(''),SRCH.k,dirty.sheet?Math.random():''].join('|');
+  html=`<div class="sheet${all?' out':''}"><div class="hd"><svg viewBox="0 0 40 40"><use href="#${n.s}"/></svg><div><h3>${esc(n.n)}</h3><p class="mut">${all?'Du har letat överallt här. Kom tillbaka när nya skatter har dykt upp!':hint?(left?`${left} skatter gömda här just nu`:'Inget kvar här just nu'):'Var vill du leta?'}</p></div></div><div class="spots">${n.spots.map((s,i)=>{const d=done.includes(i),go=searching&&searching.sp===i;return`<button class="spot${go?' go':''}${d?' done':''}" data-sp="${i}"${searching||d?' disabled':''}>${esc(s)}<small>${go?'Letar…':d?'Genomsökt':'Leta här'}</small><i></i></button>`}).join('')}</div></div>`}
  else{key=moving?'mv':'idle';html=moving?'':`<div class="hint">Tryck på en plats eller vit prick för att gå dit</div>`}
  dirty.sheet=false;if(key===sheetKey)return;sheetKey=key;$('#sheetWrap').innerHTML=html;
  const go=$('#sheetWrap .spot.go');if(go){go.classList.remove('go');void go.offsetWidth;go.classList.add('go')}}
 $('#sheetWrap').addEventListener('click',async e=>{const b=e.target.closest('.spot');if(!b||searching)return;const now=T(),p=PL[me];if(asleep(p,now))return;const L=locAt(p.m||startM(),now);if(!L.node)return;
- const pl=L.node,sp=+b.dataset.sp;searching={pl,sp};sheetKey='';dirty.sheet=true;renderSheet(now);await new Promise(r=>setTimeout(r,SEARCHMS));
+ const pl=L.node,sp=+b.dataset.sp;if((searchedSet()[pl]||[]).includes(sp))return;searching={pl,sp};sheetKey='';dirty.sheet=true;renderSheet(now);await new Promise(r=>setTimeout(r,SEARCHMS));
  if(!searching||searching.pl!==pl){return}const p2=PL[me],L2=locAt(p2.m||startM(),T());searching=null;sheetKey='';
- if(asleep(p2,T())||L2.node!==pl)return;const got=await search(me,pl,sp);if(!got.length){SND.sad();toast(`Inget ${esc(NODES[pl].spots[sp].toLowerCase())} just nu…`)}});
+ if(asleep(p2,T())||L2.node!==pl)return;markSearched(pl,sp);const got=await search(me,pl,sp);if(!got.length){SND.sad();toast(`Inget ${esc(NODES[pl].spots[sp].toLowerCase())} just nu…`)}});
 
 /* ===== Pekare: tryck, dra, nypa ===== */
 {const svg=$('#map'),ptr=new Map();let down=null,drag=null,pinch=null;
