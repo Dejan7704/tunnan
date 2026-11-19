@@ -212,7 +212,7 @@ hr{border:0;border-top:2px dashed #e3d8c4;margin:4px 0;width:100%}
   <div class="rule"><svg viewBox="0 0 48 60"><use href="#i-mon"/></svg><span><b>Tunnan-monstret</b> strövar runt på ön. Går du på det somnar du i 10 sekunder. Ibland försvinner det i ett poff och dyker upp någon annanstans!</span></div>
   <div class="rule"><svg><use href="#i-sprit"/></svg><span><b>Mygg-sprit</b> finns bara på genvägarna. Kasta den på någon så somnar hen i 20 sekunder.</span></div>
  </div>
- <p class="mut">Längs vägarna syns bara gula stjärnor. Vad som gömmer sig där får du veta först när du går på dem! Nya skatter dyker upp under spelets gång. Tryck på en plats eller en vit prick på kartan för att gå dit.</p>
+ <p class="mut">Spelet tar slut när tiden är ute eller när alla skatter är hittade. Längs vägarna syns bara gula stjärnor. Vad som gömmer sig där får du veta först när du går på dem! Nya skatter dyker upp under spelets gång. Tryck på en plats eller en vit prick på kartan för att gå dit.</p>
  <hr>
  <h3>Spelare (<span id="lbN">0</span>)</h3><div class="plist" id="lbList"></div>
  <div class="stack" style="gap:6px"><b>Speltid</b><div class="seg" id="durSeg"><button data-d="20">20 min</button><button data-d="30" class="on">30 min</button><button data-d="45">45 min</button></div></div>
@@ -222,7 +222,7 @@ hr{border:0;border-top:2px dashed #e3d8c4;margin:4px 0;width:100%}
 </div></section>
 
 <section class="screen" id="sc-end"><div class="card stack">
- <h1>Alla skatter är hittade!</h1>
+ <h1 id="endTitle">Alla skatter är hittade!</h1>
  <div class="podium" id="podium"></div>
  <div class="lb" id="endList"></div>
  <button class="btn big" id="endMap">Visa kartan</button>
@@ -295,8 +295,8 @@ SHORTS.forEach(([a,b,n,boat])=>EDGES.push({a,b,sc:true,n,boat:!!boat}));
 const ADJ={};for(const k in NODES)ADJ[k]=[];
 EDGES.forEach((e,i)=>{e.i=i;e.len=hyp(NODES[e.a].x,NODES[e.a].y,NODES[e.b].x,NODES[e.b].y);ADJ[e.a].push({to:e.b,e:i});ADJ[e.b].push({to:e.a,e:i})});
 const edgeBetween=(a,b)=>EDGES.findIndex(e=>(e.a===a&&e.b===b)||(e.a===b&&e.b===a));
-const START='hamn';
-const startM=()=>({sx:NODES[START].x,sy:NODES[START].y,se:-1,sn:START,route:[],t0:0,sp:SPEED});
+const startOf=seed=>seed==null?'hamn':PLACES[Math.abs(seed)%PLACES.length].id;
+const startM=node=>{const n=node||startOf(META&&META.seed);return{sx:NODES[n].x,sy:NODES[n].y,se:-1,sn:n,route:[],t0:0,sp:SPEED}};
 
 function route(loc,target){
  const d={},prev={},Q=new Set(Object.keys(NODES));for(const k in NODES)d[k]=Infinity;
@@ -322,9 +322,10 @@ function genItems(seed){
  shuffle(pids,R).slice(0,8).forEach((pl,i)=>out.push({id:'i'+n++,ty:'t',pl,sp:Math.floor(R()*4),w:W[[0,1,1,2,2,3,4,4][i]]}));
  const hid=ty=>out.push({id:'i'+n++,ty,pl:pids[Math.floor(R()*pids.length)],sp:Math.floor(R()*4),w:pickW()});
  const onEdge=(ty,e,t,w)=>{const A=NODES[e.a],B=NODES[e.b];out.push({id:'i'+n++,ty,e:e.i,x:A.x+(B.x-A.x)*t,y:A.y+(B.y-A.y)*t,w})};
- for(let i=0;i<14;i++)hid('k');for(let i=0;i<26;i++)hid('r');
- for(let i=0;i<6;i++)onEdge('k',roadE[Math.floor(R()*roadE.length)],.2+R()*.6,pickW());
- for(let i=0;i<14;i++)onEdge('r',roadE[Math.floor(R()*roadE.length)],.2+R()*.6,pickW());
+ const rk=4+Math.floor(R()*5),rr=10+Math.floor(R()*9);
+ for(let i=0;i<20-rk;i++)hid('k');for(let i=0;i<40-rr;i++)hid('r');
+ for(let i=0;i<rk;i++)onEdge('k',roadE[Math.floor(R()*roadE.length)],.15+R()*.7,pickW());
+ for(let i=0;i<rr;i++)onEdge('r',roadE[Math.floor(R()*roadE.length)],.15+R()*.7,pickW());
  shortE.forEach(e=>[0,1,2].forEach(j=>onEdge('s',e,(j+1)/4+(R()-.5)*.12,W[[0,2,3][j]])));
  ITEMS=out;HID=out.filter(i=>i.pl);MAPIT=out.filter(i=>i.e!==undefined);FOOD=out.filter(i=>i.ty!=='s');itemSeed=seed;
 }
@@ -359,7 +360,7 @@ class SupaNet{
   ch.subscribe(s=>{setConn(s==='SUBSCRIBED');if(s==='SUBSCRIBED')this.loadAll().catch(()=>{})});
   this.ch=ch;
  }
- now(){return Date.now()+this.off}
+ now(){return Math.round(Date.now()+this.off)}
  async setMeta(o){const r={game:GID};if('status'in o)r.status=o.status;if('startAt'in o)r.start_at=o.startAt;if('seed'in o)r.seed=o.seed;if('dur'in o)r.dur=o.dur;const{error}=await this.q('tunnan_meta').upsert(r);if(error)toast('Fel: '+error.message)}
  async upsertPlayer(id,o){this.P[id]={...(this.P[id]||{}),...o,id};const{error}=await this.q('tunnan_players').upsert({game:GID,id,...o});if(error)toast('Fel: '+error.message)}
  async updatePlayer(id,o){if(this.P[id])Object.assign(this.P[id],o);await this.q('tunnan_players').update(o).eq('game',GID).eq('id',id)}
@@ -367,7 +368,7 @@ class SupaNet{
  async claim(item,by){const{error}=await this.q('tunnan_claims').insert({game:GID,item,by,t:this.now()});if(!error){this.C[item]={by,t:this.now()};return true}return false}
  async throwAt(by,q){const{data,error}=await this.sb.rpc('tunnan_throw',{g:GID,thrower:by,target:q});if(error){toast('Fel: '+error.message);return false}return!!data}
  async event(e){await this.q('tunnan_events').insert({game:GID,...e})}
- async resetRound(meta){await this.q('tunnan_claims').delete().eq('game',GID);await this.q('tunnan_events').delete().eq('game',GID);await this.q('tunnan_players').update({m:startM(),z:null}).eq('game',GID);await this.setMeta(meta)}
+ async resetRound(meta){await this.q('tunnan_claims').delete().eq('game',GID);await this.q('tunnan_events').delete().eq('game',GID);await this.q('tunnan_players').update({m:startM(startOf(meta.seed)),z:null}).eq('game',GID);await this.setMeta(meta)}
  async removePlayers(ids){let a=this.q('tunnan_players').delete().eq('game',GID),b=this.q('tunnan_avatars').delete().eq('game',GID);if(ids){a=a.in('id',ids);b=b.in('id',ids)}await a;await b;await this.loadAll()}
 }
 class LocalNet{
@@ -386,7 +387,7 @@ class LocalNet{
  async claim(item,by){return this.tx(s=>{if(s.claims[item])return false;s.claims[item]={by,t:Date.now()};return true})}
  async throwAt(by,q){return this.tx(s=>{const p=s.players[q],n=Date.now();if(!p||(p.z&&p.z.i>n))return false;p.z={s:n+SLEEP,i:n+SLEEP+15000,by};s.events.push({id:++s.seq,ty:'hit',p:by,q,t:n});return true})}
  async event(e){this.tx(s=>{s.events.push({id:++s.seq,...e})})}
- async resetRound(meta){this.tx(s=>{s.claims={};s.events=[];for(const id in s.players){s.players[id].m=startM();s.players[id].z=null}s.meta={...(s.meta||{}),...meta}})}
+ async resetRound(meta){this.tx(s=>{s.claims={};s.events=[];for(const id in s.players){s.players[id].m=startM(startOf(meta.seed));s.players[id].z=null}s.meta={...(s.meta||{}),...meta}})}
  async removePlayers(ids){this.tx(s=>{for(const id of Object.keys(s.players))if(!ids||ids.includes(id)){delete s.players[id];delete s.avatars[id]}})}
 }
 
@@ -394,9 +395,9 @@ class LocalNet{
 let net=null,LOCAL=false,META=null,PL={},AV={},CL={},EVS=new Map(),ST={},gotPlayers=false,joinT=0;
 let me=ls.get('tunnan-pid-'+GID);
 if(location.hash==='#ledare')ls.set('tunnan-leader','1');
-const LEADER=ls.get('tunnan-leader')==='1';
+const LEADER=true; // alla spelare kan starta och styra spelet
 let BOTS=[];try{BOTS=JSON.parse(ls.get('tunnan-bots-'+GID))||[]}catch(e){}
-const T=()=>net?net.now():Date.now();
+const T=()=>Math.round(net?net.now():Date.now());
 const running=t=>META&&META.status==='running'&&t>=META.startAt;
 const asleep=(p,t)=>p&&p.z&&p.z.s>t;
 const released=(it,t)=>META&&META.startAt&&t>=META.startAt+it.w*META.dur*60000;
@@ -450,17 +451,46 @@ const SND={ctx:null,out:null,on:ls.get('tunnan-snd')!=='0',
   for(const[f,d]of[[392,.32],[370,.32],[349,.32],[330,1]]){const g=c.createGain();g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.16,t+.03);g.gain.setValueAtTime(.16,t+d-.06);g.gain.exponentialRampToValueAtTime(.0001,t+d);g.connect(lp);const o=c.createOscillator();o.type='sawtooth';o.frequency.setValueAtTime(f,t);
    if(d>.5){const l=c.createOscillator(),lg=c.createGain();l.frequency.value=5.5;lg.gain.value=9;l.connect(lg);lg.connect(o.frequency);l.start(t+.15);l.stop(t+d);o.frequency.linearRampToValueAtTime(f*.94,t+d)}o.connect(g);o.start(t);o.stop(t+d+.02);t+=d}},
  noise(t,d,v,f){const c=this.ctx,b=c.createBuffer(1,Math.ceil(c.sampleRate*d),c.sampleRate),a=b.getChannelData(0);for(let i=0;i<a.length;i++)a[i]=(Math.random()*2-1)*(1-i/a.length);const s=c.createBufferSource();s.buffer=b;const lp=c.createBiquadFilter();lp.type='lowpass';lp.frequency.setValueAtTime(f,t);lp.frequency.exponentialRampToValueAtTime(200,t+d);s.connect(lp);lp.connect(this.env(t,.005,d,v));s.start(t)},
- poff(){if(!this.ok())return;const t=this.ctx.currentTime+.02;this.noise(t,.35,.5,2400);const o=this.osc('sine',220,t,.2,this.env(t,.003,.18,.25));o.frequency.exponentialRampToValueAtTime(60,t+.18)},
- laugh(){if(!this.ok())return;const c=this.ctx;let t=c.currentTime+.05;const bp=c.createBiquadFilter();bp.type='bandpass';bp.frequency.value=750;bp.Q.value=2.5;bp.connect(this.out);
+ swirl(up,D){const c=this.ctx,t=c.currentTime+.02,b=c.createBuffer(1,Math.ceil(c.sampleRate*D),c.sampleRate),a=b.getChannelData(0);for(let i=0;i<a.length;i++)a[i]=Math.random()*2-1;
+  const s=c.createBufferSource();s.buffer=b;const bp=c.createBiquadFilter();bp.type='bandpass';bp.Q.value=7;bp.frequency.setValueAtTime(up?350:3200,t);bp.frequency.exponentialRampToValueAtTime(up?3600:300,t+D*.85);
+  const lfo=c.createOscillator();lfo.frequency.setValueAtTime(4,t);lfo.frequency.linearRampToValueAtTime(15,t+D);const lg=c.createGain();lg.gain.value=450;lfo.connect(lg);lg.connect(bp.frequency);
+  const g=c.createGain();g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.9,t+.12);g.gain.exponentialRampToValueAtTime(.001,t+D);s.connect(bp);bp.connect(g);g.connect(this.out);s.start(t);lfo.start(t);lfo.stop(t+D);
+  for(let i=0;i<12;i++){const k=up?i:11-i,tt=t+.04+i*D/16,f=880*Math.pow(1.16,k)+Math.random()*60;this.osc('sine',f,tt,.13,this.env(tt,.003,.11,.13));this.osc('triangle',f*1.5,tt,.1,this.env(tt,.003,.08,.05))}},
+ poff(){if(!this.ok())return;this.swirl(true,1.05);const t=this.ctx.currentTime+.75,o=this.osc('sine',190,t,.28,this.env(t,.003,.25,.4));o.frequency.exponentialRampToValueAtTime(48,t+.25);this.noise(t,.3,.45,2000)},
+ appear(){if(!this.ok())return;this.swirl(false,.6);const t=this.ctx.currentTime+.02;this.noise(t,.25,.35,1600);setTimeout(()=>this.laugh(),420)},
+ laugh(){if(!this.ok())return;const c=this.ctx,t0=c.currentTime+.04;
+  const ws=c.createWaveShaper(),cv=new Float32Array(1024);for(let i=0;i<1024;i++)cv[i]=Math.tanh((i/512-1)*3.5);ws.curve=cv;
+  const f1=c.createBiquadFilter();f1.type='bandpass';f1.Q.value=4;f1.frequency.setValueAtTime(320,t0);f1.frequency.linearRampToValueAtTime(720,t0+.18);
+  const f2=c.createBiquadFilter();f2.type='bandpass';f2.frequency.value=1150;f2.Q.value=5;const f0=c.createBiquadFilter();f0.type='lowpass';f0.frequency.value=380;
+  const mix=c.createGain();mix.gain.value=1.3;const dl=c.createDelay();dl.delayTime.value=.14;const fb=c.createGain();fb.gain.value=.3;
+  ws.connect(f1);ws.connect(f2);ws.connect(f0);f1.connect(mix);f2.connect(mix);f0.connect(mix);mix.connect(this.out);mix.connect(dl);dl.connect(fb);fb.connect(dl);dl.connect(this.out);
+  const vg=c.createGain();vg.gain.value=0;vg.connect(ws);const o=c.createOscillator();o.type='sawtooth';const sub=c.createOscillator();sub.type='square';const sg=c.createGain();sg.gain.value=.55;o.connect(vg);sub.connect(sg);sg.connect(vg);
+  const lfo=c.createOscillator();lfo.frequency.value=6.5;const lg=c.createGain();lg.gain.value=7;lfo.connect(lg);lg.connect(o.frequency);
+  const syl=[[.45,105,150],[.15,168,152],[.15,160,144],[.15,150,134],[.15,140,124],[.16,130,112],[.85,122,72]];let t=t0;
+  for(const[d,fa,fb2]of syl){vg.gain.setValueAtTime(0,t);vg.gain.linearRampToValueAtTime(.6,t+.03);vg.gain.setValueAtTime(.6,t+d*.62);vg.gain.linearRampToValueAtTime(0,t+d);
+   o.frequency.setValueAtTime(fa,t);o.frequency.linearRampToValueAtTime(fb2,t+d);sub.frequency.setValueAtTime(fa/2,t);sub.frequency.linearRampToValueAtTime(fb2/2,t+d);if(t>t0)this.noise(t,.06,.22,3200);t+=d+.035}
+  o.start(t0);sub.start(t0);lfo.start(t0);o.stop(t+.1);sub.stop(t+.1);lfo.stop(t+.1)},
+ oldlaugh(){if(!this.ok())return;const c=this.ctx;let t=c.currentTime+.05;const bp=c.createBiquadFilter();bp.type='bandpass';bp.frequency.value=750;bp.Q.value=2.5;bp.connect(this.out);
   for(let i=0;i<6;i++){const f=210-i*14,d=i===5?.5:.13,g=c.createGain();g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.5,t+.02);g.gain.exponentialRampToValueAtTime(.0001,t+d);g.connect(bp);const o=c.createOscillator();o.type='sawtooth';o.frequency.setValueAtTime(f*1.15,t);o.frequency.exponentialRampToValueAtTime(f*.85,t+d);o.connect(g);o.start(t);o.stop(t+d+.02);t+=i===4?.2:.16}
   const g=this.env(c.currentTime+.05,.2,1.3,.12);this.osc('sine',55,c.currentTime+.05,1.5,g)},
- snore(){if(!this.ok())return;const t=this.ctx.currentTime+.02,o=this.osc('triangle',110,t,1.2,this.env(t,.25,.9,.18));o.frequency.linearRampToValueAtTime(70,t+1.1)}
+ snoreCycle(){if(!this.ok())return;const c=this.ctx,t=c.currentTime+.02;
+  const o=c.createOscillator();o.type='sawtooth';o.frequency.setValueAtTime(62,t);o.frequency.linearRampToValueAtTime(78,t+1.1);
+  const am=c.createGain();am.gain.value=.5;const lfo=c.createOscillator();lfo.type='square';lfo.frequency.value=27;const lg=c.createGain();lg.gain.value=.5;lfo.connect(lg);lg.connect(am.gain);
+  const lp=c.createBiquadFilter();lp.type='lowpass';lp.frequency.value=700;const g=c.createGain();g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.6,t+.55);g.gain.linearRampToValueAtTime(.45,t+1);g.gain.exponentialRampToValueAtTime(.001,t+1.25);
+  o.connect(am);am.connect(lp);lp.connect(g);g.connect(this.out);o.start(t);lfo.start(t);o.stop(t+1.3);lfo.stop(t+1.3);
+  const t2=t+1.4,w=this.osc('sine',950,t2,.75,this.env(t2,.2,.55,.07));w.frequency.linearRampToValueAtTime(720,t2+.75);this.noise(t2,.7,.14,2600)},
+ fanfare(){if(!this.ok())return;const c=this.ctx,t0=c.currentTime+.05,b=.15;
+  const mel=[[392,1],[523,1],[659,1],[784,2],[659,1],[784,4],[0,1],[880,1],[784,1],[698,1],[784,1],[1047,7]];let t=t0;
+  for(const[f,d]of mel){if(f){const dur=d*b;this.osc('square',f,t,dur,this.env(t,.01,dur*.95,.08));this.osc('triangle',f*2,t,dur,this.env(t,.01,dur*.9,.05))}t+=d*b}
+  for(const[st,fs,d]of[[0,[262,330,392],9],[9,[349,440,523],5],[14,[262,330,392,523],8]])for(const f of fs){const tt=t0+st*b;this.osc('triangle',f,tt,d*b,this.env(tt,.02,d*b,.07))}
+  for(let i=0;i<14;i++){const tt=t0+i*b*1.5;this.noise(tt,.09,i%2?.18:.3,i%2?5000:1200)}
+  setTimeout(()=>this.coins(28,false),Math.max(0,(t-c.currentTime)*1000-700))},
 };
 for(const ev of['pointerdown','touchend','keydown'])document.addEventListener(ev,()=>SND.unlock(),{capture:true,passive:true});
 
 /* ===== Händelser ===== */
 function onEvent(e){if(!e||(+e.t)<joinT-3000)return;
- if(e.ty==='hit'){throwFx(e.p,e.q);if(e.q===me){SND.snore();try{navigator.vibrate&&navigator.vibrate([200,80,200])}catch(x){}}
+ if(e.ty==='hit'){throwFx(e.p,e.q);if(e.q===me){try{navigator.vibrate&&navigator.vibrate([200,80,200])}catch(x){}}
   toast(`<svg><use href="#i-sprit"/></svg><span><b>${esc(nameOf(e.p))}</b> sövde <b>${esc(nameOf(e.q))}</b> med mygg-sprit!</span>`)}
  else if(e.ty==='mhit'){if(e.q===me){SND.laugh();try{navigator.vibrate&&navigator.vibrate([300])}catch(x){}}toast(`<svg viewBox="0 0 48 60"><use href="#i-mon"/></svg><span>Tunnan-monstret tog <b>${esc(nameOf(e.q))}</b>! Zzz…</span>`)}
  else if(e.ty==='find'&&e.p!==me)toast(`<svg><use href="#i-tunna"/></svg><span><b>${esc(nameOf(e.p))}</b> hittade en silltunna vid ${esc(e.pl)}!</span>`)}
@@ -550,24 +580,25 @@ function monAppearNode(t,avoid){const now=T();let best=null,bs=-1;const ok=[];
  return ok.length?ok[Math.floor(Math.random()*ok.length)]:best}
 function monWalk(from){const r=[];let prev=null,cur=from;const hops=2+Math.floor(Math.random()*4);for(let i=0;i<hops;i++){let nb=ADJ[cur].map(a=>a.to).filter(x=>x!==prev);if(!nb.length)nb=ADJ[cur].map(a=>a.to);const nx=nb[Math.floor(Math.random()*nb.length)];r.push(nx);prev=cur;cur=nx}return r}
 function monTick(now){const P=monPlans(),last=P[P.length-1];const due=last?planEnd(last)-1500:META.startAt+4000;
- const delay=LEADER?0:2500+[...(me||'x')].reduce((a,c)=>a+c.charCodeAt(0),0)%2500;if(now<due+delay)return;if(now-monPending<5000)return;monPending=now;
+ const hum=Object.keys(PL).filter(id=>!PL[id].bot).sort(),rk=hum.indexOf(me),delay=rk===0?0:2200+(rk<0?20:rk)*900;if(now<due+delay)return;if(now-monPending<5000)return;monPending=now;
  let p;const n=last?last.n+1:1,s=META.seed;
- if(!last){const t1=Math.max(now+1500,META.startAt+8000);p={s,n,k:'p',at:null,to:monAppearNode(t1,START),t0:now,t1}}
+ if(!last){const t1=Math.max(now+1500,META.startAt+8000);p={s,n,k:'p',at:null,to:monAppearNode(t1,startOf(META.seed)),t0:now,t1}}
  else if(last.k==='p'){p={s,n,k:'w',f:last.to,r:monWalk(last.to),t0:last.t1,ap:last.t1}}
  else{const t0=Math.max(planEnd(last),now-500),at=planEndNode(last);if(Math.random()<.35){const t1=t0+MOFF;p={s,n,k:'p',at,to:monAppearNode(t1,at),t0,t1}}else p={s,n,k:'w',f:at,r:monWalk(at),t0,ap:last.ap||0}}
  net.event({ty:'mon',pl:JSON.stringify(p),t:now})}
 function checkMonster(now,M){if(!M||!M.vis||M.since<MGRACE)return;for(const id of controlled()){const p=PL[id];if(!p||asleep(p,now)||(p.z&&p.z.i>now))continue;const q=dispPos(p,now);
- if(hyp(q.x,q.y,M.x,M.y)<11){const z={s:now+10000,i:now+18000,by:'monster',d:10000};p.z=z;net.updatePlayer(id,{z});net.event({ty:'mhit',q:id,t:now})}}}
+ if(hyp(q.x,q.y,M.x,M.y)<11){const z={s:Math.round(now+10000),i:Math.round(now+18000),by:'monster',d:10000};p.z=z;net.updatePlayer(id,{z});net.event({ty:'mhit',q:id,t:now})}}}
 function inView(x,y){const h=CH*K;return x>cam.x-40*K&&x<cam.x+cam.w+40*K&&y>cam.y-40*K&&y<cam.y+h+40*K}
 function smoke(x,y){const g=document.createElementNS(NS,'g');g.setAttribute('transform',`translate(${f1(x)},${f1(y-14*K)}) scale(${K.toFixed(3)})`);
  g.innerHTML=[[-10,-4],[9,-6],[0,-14],[-6,8],[8,7],[0,0]].map(([a,b],i)=>`<circle cx="${a}" cy="${b}" r="6" fill="#d9d6d0" stroke="#9a958d" stroke-width="1"><animate attributeName="r" from="5" to="${15+i}" dur=".7s" fill="freeze"/><animate attributeName="opacity" from="1" to="0" dur=".75s" fill="freeze"/></circle>`).join('');$('#fx').appendChild(g);setTimeout(()=>g.remove(),800)}
 function renderMonster(now){const g=$('#monG');const M=(META&&META.status==='running'&&now>=META.startAt)?monAt(now):null;const vis=!!(M&&M.vis);
- if(M&&monVisPrev!==null&&vis!==monVisPrev){smoke(M.x,M.y);if(inView(M.x,M.y)){if(vis)setTimeout(()=>SND.laugh(),250);else SND.poff()}}
+ if(M&&monVisPrev!==null&&vis!==monVisPrev){smoke(M.x,M.y);if(inView(M.x,M.y)){if(vis)SND.appear();else SND.poff()}}
  monVisPrev=vis;
  if(!vis){g.style.display='none';return M}
  const grow=Math.min(1,Math.max(.25,M.since/300)),wob=M.moving?Math.sin(now/110)*8:Math.sin(now/400)*3,hop=M.moving?Math.abs(Math.sin(now/110))*3:0;
  g.style.display='';g.setAttribute('transform',`translate(${f1(M.x)},${f1(M.y-hop*K)}) scale(${(K*grow).toFixed(3)}) rotate(${wob.toFixed(1)})`);g.setAttribute('opacity',M.since<MGRACE?(.55+.45*Math.abs(Math.sin(now/90))).toFixed(2):'1');return M}
 
+let endSent=0,snoreNext=0;
 /* ===== Spelloop ===== */
 const lastChk={},warned={};let handledZ={},lastWave=-1,searching=null,endShown=false;
 function checkPickups(pid,now){const p=PL[pid];if(!p||!p.m)return;let t0=Math.max(lastChk[pid]||now,p.m.t0||0,now-120000);lastChk[pid]=now;
@@ -578,6 +609,8 @@ function checkSleep(now){for(const id of controlled()){const p=PL[id],z=p.z;if(!
   if(!posAt(m,ts).done){const L=locAt(m,ts);const nm={sx:L.x,sy:L.y,se:L.node?-1:L.edge,sn:L.node||null,route:[],t0:ts,sp:SPEED};p.m=nm;net.updatePlayer(id,{m:nm})}if(id===me){searching=null;dirty.sheet=true}}}
 function frame(){const now=T();applyCam(now);
  const MM=renderMonster(now);
+ if(META&&META.status==='running'&&now>=META.startAt+(META.dur||30)*60000&&now-endSent>6000){endSent=now;net.setMeta({status:'ended'})}
+ if(PL[me]&&asleep(PL[me],now)){const pn=performance.now();if(pn>=snoreNext){snoreNext=pn+2700;SND.snoreCycle()}}else snoreNext=0;
  if(META&&META.status==='running'){if(now>=META.startAt){for(const id of controlled())checkPickups(id,now);checkSleep(now);checkMonster(now,MM);botsTick(now);monTick(now)}
   const wi=[0,.2,.4,.6,.8].filter(w=>now>=META.startAt+w*META.dur*60000).length,hk=wi+'|'+hintOn(now);if(hk!==waveKey){waveKey=hk;dirty.items=dirty.places=dirty.sheet=true}
   if(lastWave>=0&&wi>lastWave&&wi>1)toast('Nya skatter har dykt upp på ön!','good');if(now>=META.startAt)lastWave=wi;}
@@ -590,7 +623,7 @@ function renderMe(){if(!me||!PL[me])return;$('#meAv').outerHTML=avHTML(me,38,'me
  $('#meCnt').innerHTML=['t','k','r'].map(k=>`<span><svg><use href="#${ICON[k]}"/></svg>${s[k]}</span>`).join('');$('#spN').textContent=s.sprit}
 function avHTML(id,size,domId){const p=PL[id]||{},c=p.color||'#a8382b';return`<span class="av"${domId?` id="${domId}"`:''} style="--s:${size}px;--c:${c}">${AV[id]?`<img src="${AV[id]}" alt="">`:esc(initials(p.name))}</span>`}
 function hudTick(now){if(now-hudT<250)return;hudT=now;const on=!!(META&&META.status!=='lobby'&&PL[me]);$('#hud').hidden=$('#bottom').hidden=!on;if(!on)return;
- const el=Math.max(0,now-META.startAt),mm=Math.floor(el/60000),ss=Math.floor(el/1000)%60;$('#clk').textContent=META.status==='ended'?'Slut':now<META.startAt?'Strax…':`${mm}:${String(ss).padStart(2,'0')}`;
+ const el=Math.max(0,now-META.startAt),mm=Math.floor(el/60000),ss=Math.floor(el/1000)%60;const rem=Math.max(0,META.startAt+META.dur*60000-now),rm=Math.floor(rem/60000),rs=Math.floor(rem/1000)%60;$('#clk').textContent=META.status==='ended'?'Slut':now<META.startAt?'Strax…':`${rm}:${String(rs).padStart(2,'0')}`;
  const left=FOOD.filter(it=>!CL[it.id]).length;$('#left').textContent=hintOn(now)?`Slutspurt! ${left} kvar`:`${left} skatter kvar`;
  const c=$('#count'),cd=Math.ceil((META.startAt-now)/1000);if(META.status==='running'&&cd>0&&cd<=5){c.classList.add('on');c.textContent=cd}else if(META.status==='running'&&now-META.startAt<900){c.classList.add('on');c.textContent='Kör!'}else c.classList.remove('on');
  const p=PL[me],sl=asleep(p,now);$('#sleep').classList.toggle('on',!!sl);if(sl){$('#slT').textContent=Math.ceil((p.z.s-now)/1000);$('#slBy').textContent=p.z.by==='monster'?'Tunnan-monstret fick tag på dig!':`${p.z.by&&PL[p.z.by]?PL[p.z.by].name:'Någon'} kastade mygg-sprit på dig!`}
@@ -672,16 +705,16 @@ let screen=null;
 function showScreen(id){screen=id;document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on',s.id==='sc-'+id))}
 let editing=false;
 function updateScreens(){if(!net||!gotPlayers)return;if(!me||!PL[me]){if(screen!=='profile')showProfile(false);return}if(screen==='profile'&&editing)return;
- const s=META?.status||'lobby';if(s==='lobby')showScreen('lobby');else if(s==='ended'&&!endShown){endShown=true;showScreen('end');renderEnd()}else if(s==='running'&&screen!==null)showScreen(null);else if(s==='ended'&&screen!=='end')showScreen(null)}
+ const s=META?.status||'lobby';if(s==='lobby')showScreen('lobby');else if(s==='ended'&&!endShown){endShown=true;showScreen('end');renderEnd();setTimeout(()=>SND.fanfare(),300)}else if(s==='running'&&screen!==null)showScreen(null);else if(s==='ended'&&screen!=='end')showScreen(null)}
 function renderLobby(){if(screen!=='lobby')return;const ids=Object.keys(PL);$('#lbN').textContent=ids.length;$('#lbList').innerHTML=ids.map(id=>`<div>${avHTML(id,56)}${esc(PL[id].name)}${PL[id].bot?' <span class="mut">(test)</span>':''}</div>`).join('')||'<p class="mut">Inga spelare än.</p>';
  $('#lbStart').hidden=$('#durSeg').parentElement.hidden=!LEADER;$('#lbWait').hidden=LEADER;$('#lbMenu').hidden=!LEADER;$('#endNew').hidden=!LEADER;
- $('#lbMode').textContent=LOCAL?'Testläge: spelet finns bara i den här webbläsaren.':'Alla som öppnar länken hamnar i samma spel.'}
+ $('#lbMode').textContent=LOCAL?'Testläge: spelet finns bara i den här webbläsaren.':'Alla som öppnar länken hamnar i samma spel. När alla är med kan vem som helst trycka på Starta spelet.'}
 let dur=30;$('#durSeg').onclick=e=>{const b=e.target.closest('[data-d]');if(!b)return;dur=+b.dataset.d;$('#durSeg').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b))};
 $('#lbStart').onclick=async()=>{if(!(await ask(`Starta spelet för alla ${Object.keys(PL).length} spelare?`,'Starta!')))return;wake();$('#lbStart').disabled=true;
  try{await net.resetRound({status:'running',seed:Math.floor(Math.random()*1e9),dur,startAt:T()+5000})}finally{$('#lbStart').disabled=false}};
 $('#lbEdit').onclick=()=>showProfile(true);$('#lbShare').onclick=openShare;
 $('#endMap').onclick=()=>showScreen(null);$('#endNew').onclick=()=>net.setMeta({status:'lobby'});
-function renderEnd(){$('#endNew').hidden=!LEADER;const ids=Object.keys(PL).sort((a,b)=>st(b).score-st(a).score);const top=[ids[1],ids[0],ids[2]];const hts=[90,125,70];
+function renderEnd(){$('#endTitle').textContent=FOOD.length&&FOOD.every(it=>CL[it.id])?'Alla skatter är hittade!':'Tiden är ute!';$('#endNew').hidden=!LEADER;const ids=Object.keys(PL).sort((a,b)=>st(b).score-st(a).score);const top=[ids[1],ids[0],ids[2]];const hts=[90,125,70];
  $('#podium').innerHTML=top.map((id,i)=>id?`<div>${avHTML(id,i===1?76:58)}${esc(PL[id].name)}<span class="blk" style="height:${hts[i]}px">${[2,1,3][i]}</span></div>`:'<div></div>').join('');$('#endList').innerHTML=lbRows()}
 
 /* ===== Profil och karikatyr ===== */
