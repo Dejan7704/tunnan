@@ -172,7 +172,7 @@ hr{border:0;border-top:2px dashed #e3d8c4;margin:4px 0;width:100%}
  <symbol id="s-kajak" viewBox="0 0 40 40"><path d="M3 24q17 6 34 0-17-6-34 0z" fill="#e8822a" stroke="#9a4d10" stroke-width=".8"/><ellipse cx="20" cy="23.5" rx="4" ry="1.6" fill="#333"/><path d="M8 12l24 22" stroke="#555" stroke-width="1.6"/><path d="M6 10l4 1-1 4zM34 36l-4-1 1-4z" fill="#f3c13a" stroke="#555" stroke-width=".6"/><path d="M2 32q3-2 6 0t6 0 6 0 6 0 6 0 6 0" fill="none" stroke="#5d8fb0" stroke-width="1.6"/></symbol>
 </defs></svg>
 
-<svg id="map" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 822"><g id="base"></g><polyline id="routeL" fill="none" stroke="#e6c66e" stroke-width="4" stroke-dasharray="2 7" stroke-linecap="round" vector-effect="non-scaling-stroke"/><g id="itemsL"></g><g id="placesL"></g><g id="monL"><g id="monG0" style="display:none"><use href="#i-mon" x="-22" y="-46" width="44" height="55"/></g><g id="monG1" style="display:none"><use href="#i-mon" x="-22" y="-46" width="44" height="55"/></g></g><g id="playersL"></g><g id="fx"></g></svg>
+<svg id="map" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 822"><g id="base"></g><polyline id="routeL" fill="none" stroke="#e6c66e" stroke-width="4" stroke-dasharray="2 7" stroke-linecap="round" vector-effect="non-scaling-stroke"/><g id="itemsL"></g><g id="placesL"></g><g id="monL"><g id="monG0" style="display:none"><use href="#i-mon" x="-22" y="-46" width="44" height="55"/></g><g id="monG1" style="display:none"><use href="#i-mon" x="-22" y="-46" width="44" height="55"/></g><g id="monG2" style="display:none"><use href="#i-mon" x="-22" y="-46" width="44" height="55"/></g></g><g id="playersL"></g><g id="fx"></g></svg>
 
 <canvas id="street"></canvas><div id="stTitle"></div>
 <div id="hud" hidden>
@@ -208,7 +208,7 @@ hr{border:0;border-top:2px dashed #e3d8c4;margin:4px 0;width:100%}
  <div class="avbig" id="pfAv">?</div>
  <div class="row"><button class="btn y" id="pfCam">Ta en selfie</button><button class="btn w" id="pfPick">Välj bild</button><button class="btn w" id="pfNo">Utan foto</button></div>
  <input type="file" accept="image/*" capture="user" id="fCam" hidden><input type="file" accept="image/*" id="fPick" hidden>
- <p class="mut">Ansiktet förvandlas till en liten karikatyr. Bilden syns bara i spelet.</p>
+ <p class="mut">Bilden får en rolig fish-eye-effekt, som i en dörrkikare. Den syns bara i spelet.</p>
  <label>Namn<input id="pfName" maxlength="14" autocomplete="off" placeholder="T.ex. Kräft-Kalle"></label>
  <div class="stack" style="gap:6px"><b>Färg</b><div class="row" id="pfCol"></div></div>
  <button class="btn big" id="pfGo">Hoppa in i spelet</button>
@@ -226,12 +226,12 @@ hr{border:0;border-top:2px dashed #e3d8c4;margin:4px 0;width:100%}
  <p>Gå runt på Grundsund och leta skatter i bodar, på bryggor och i kyrkan. Mest poäng när allt är hittat vinner.</p>
  <div class="rules">
   <div class="rule"><svg><use href="#i-tunna"/></svg><span><b>10 p</b> Silltunna, 8 st. Gömda på platserna.</span></div>
-  <div class="rule"><svg><use href="#i-kraft"/></svg><span><b>4 p</b> Kräfta, 20 st.</span></div>
-  <div class="rule"><svg><use href="#i-raka"/></svg><span><b>2 p</b> Räka, 40 st. Ligger också längs vägarna.</span></div>
-  <div class="rule"><svg viewBox="0 0 48 60"><use href="#i-mon"/></svg><span><b>Två Tunnan-monster</b> strövar runt på ön. Går du på ett av dem somnar du i 10 sekunder. Ibland försvinner de i ett poff och dyker upp någon annanstans!</span></div>
+  <div class="rule"><svg><use href="#i-kraft"/></svg><span><b>4 p</b> Kräfta.</span></div>
+  <div class="rule"><svg><use href="#i-raka"/></svg><span><b>2 p</b> Räka. Ligger också längs vägarna.</span></div>
+  <div class="rule"><svg viewBox="0 0 48 60"><use href="#i-mon"/></svg><span><b>Tre Tunnan-monster</b> strövar runt på ön. Går du på ett av dem somnar du i 10 sekunder. Ibland försvinner de i ett poff och dyker upp någon annanstans!</span></div>
   <div class="rule"><svg><use href="#i-mys"/></svg><span><b>Gatuvy</b> När du går på en väg zoomar spelet in till gatan. Dra fingret åt sidan för att styra mot stjärnorna och bort från monstren, uppåt för att gå framåt och nedåt för att vända.</span></div>
   <div class="rule"><svg viewBox="0 0 60 40"><use href="#i-gull"/></svg><span><b>Måsar</b> flyger ibland över gatan och bajsar. Se skuggan på marken och styr undan – får du bajs under skorna går du jättelångsamt i 20 sekunder!</span></div>
-  <div class="rule"><svg><use href="#i-sprit"/></svg><span><b>Mygg-sprit</b> finns bara på genvägarna. Kasta den på någon som är på samma gata, så somnar hen i 20 sekunder.</span></div>
+  <div class="rule"><svg><use href="#i-sprit"/></svg><span><b>Mygg-sprit</b> finns på alla gator. Kasta den på någon som är på samma gata, så somnar hen i 20 sekunder – men den som är snabb kan väja undan!</span></div>
  </div>
  <p class="mut">Spelet tar slut när tiden är ute eller när alla skatter är hittade. Längs vägarna syns bara gula stjärnor. Vad som gömmer sig där får du veta först när du går på dem – ibland är det en nitlott! Nya skatter dyker upp under spelets gång. Tryck på en plats eller en vit prick på kartan för att gå dit.</p>
  <hr>
@@ -350,6 +350,7 @@ function genItems(seed){
  for(let i=0;i<rr;i++)onEdge('r',roadE[Math.floor(R()*roadE.length)],.15+R()*.7,pickW());
  shortE.forEach(e=>[0,1,2].forEach(j=>onEdge('s',e,(j+1)/4+(R()-.5)*.12,W[[0,2,3][j]])));
  for(let i=0;i<10;i++)onEdge('n',roadE[Math.floor(R()*roadE.length)],.15+R()*.7,pickW());
+ roadE.forEach(e=>{onEdge(R()<.3?'k':'r',e,.15+R()*.7,pickW());onEdge('s',e,.15+R()*.7,pickW())});
  shortE.forEach(e=>{if(R()<.75)onEdge('n',e,R()<.5?.12+R()*.08:.8+R()*.08,pickW())});
  ITEMS=out;HID=out.filter(i=>i.pl);MAPIT=out.filter(i=>i.e!==undefined);FOOD=out.filter(i=>i.ty!=='s'&&i.ty!=='n');itemSeed=seed;
 }
@@ -440,7 +441,7 @@ const G={
 function stats(){ST={};const g=id=>ST[id]||(ST[id]={score:0,k:0,r:0,t:0,s:0,thrown:0});
  const byId={};for(const it of ITEMS)byId[it.id]=it;
  for(const id in CL){const it=byId[id];if(!it)continue;const s=g(CL[id].by);if(it.ty==='s')s.s++;else if(it.ty!=='n'){s[it.ty]++;s.score+=VAL[it.ty]}}
- for(const e of EVS.values())if(e.ty==='hit')g(e.p).thrown++;
+ for(const e of EVS.values())if(e.ty==='hit'||e.ty==='throw')g(e.p).thrown++;
  for(const id in ST)ST[id].sprit=Math.max(0,ST[id].s-ST[id].thrown);renderMe()}
 const st=id=>ST[id]||{score:0,k:0,r:0,t:0,sprit:0};
 
@@ -463,7 +464,7 @@ const cap=s=>s[0].toUpperCase()+s.slice(1);
 async function search(pid,pl,sp){const now=T();const list=HID.filter(it=>it.pl===pl&&it.sp===sp&&released(it,now)&&!CL[it.id]&&!pend.has(it.id));const got=[];for(const it of list)if(await claim(pid,it))got.push(it);return got}
 let throwLock=0;
 async function throwAt(pid,q){const now=T();if(now<throwLock&&pid===me)return;if(st(pid).sprit<1||asleep(PL[pid],now))return false;const t=PL[q];if(!t)return false;if(!sameStreet(pid,q,now)){if(pid===me)toast(`${esc(t.name)} är inte på din gata.`);return false}if(t.z&&t.z.i>now){if(pid===me)toast(`${esc(t.name)} är skyddad en liten stund till.`);return false}
- if(pid===me)throwLock=now+1500;const ok=await net.throwAt(pid,q);if(!ok&&pid===me)toast(`Missade! ${esc(t.name)} var skyddad.`);return ok}
+ if(pid===me)throwLock=now+1200;const ei=edgeOfPlayer(q,now)>=0?edgeOfPlayer(q,now):edgeOfPlayer(pid,now);await net.event({ty:'throw',p:pid,q,t:now,pl:JSON.stringify({ln:laneOfPlayer(q,ei),ei,ft:900})});return true}
 async function checkEnd(){if(!META||META.status!=='running'||!FOOD.length)return;if(FOOD.every(it=>CL[it.id])){await net.setMeta({status:'ended'})}}
 
 /* ===== Ljud (skapas i webbläsaren, inga ljudfiler) ===== */
@@ -507,6 +508,8 @@ const SND={ctx:null,out:null,on:ls.get('tunnan-snd')!=='0',
   const o=c.createOscillator();o.type='sawtooth';o.frequency.setValueAtTime(1350,t);o.frequency.linearRampToValueAtTime(2100,t+.05);o.frequency.exponentialRampToValueAtTime(1150,t+d);const l=c.createOscillator(),lg=c.createGain();l.frequency.value=28;lg.gain.value=60;l.connect(lg);lg.connect(o.frequency);o.connect(g);o.start(t);o.stop(t+d+.02);l.start(t);l.stop(t+d+.02)}},
  splat(){if(!this.ok())return;const c=this.ctx,t=c.currentTime+.02;this.noise(t,.35,.7,900);const o=this.osc('sine',110,t,.3,this.env(t,.005,.28,.45));o.frequency.exponentialRampToValueAtTime(38,t+.28);
   for(let i=0;i<4;i++){const tt=t+.12+i*.09,b=c.createBufferSource(),len=Math.ceil(c.sampleRate*.08),buf=c.createBuffer(1,len,c.sampleRate),a=buf.getChannelData(0);for(let j=0;j<len;j++)a[j]=(Math.random()*2-1)*(1-j/len);b.buffer=buf;const bp=c.createBiquadFilter();bp.type='bandpass';bp.Q.value=6;bp.frequency.setValueAtTime(300+i*120,tt);bp.frequency.exponentialRampToValueAtTime(1400,tt+.07);b.connect(bp);bp.connect(this.env(tt,.004,.07,.5));b.start(tt)}},
+ bump(){if(!this.ok())return;const t=this.ctx.currentTime+.02,o=this.osc('sine',320,t,.25,this.env(t,.004,.22,.4));o.frequency.exponentialRampToValueAtTime(110,t+.2);this.noise(t,.08,.3,800)},
+ whoosh(){if(!this.ok())return;const c=this.ctx,t=c.currentTime+.02,b=c.createBuffer(1,Math.ceil(c.sampleRate*.6),c.sampleRate),a=b.getChannelData(0);for(let i=0;i<a.length;i++)a[i]=Math.random()*2-1;const s=c.createBufferSource();s.buffer=b;const bp=c.createBiquadFilter();bp.type='bandpass';bp.Q.value=3;bp.frequency.setValueAtTime(500,t);bp.frequency.exponentialRampToValueAtTime(2500,t+.5);s.connect(bp);bp.connect(this.env(t,.08,.5,.5));s.start(t)},
  plopp(){if(!this.ok())return;const t=this.ctx.currentTime+.02;this.noise(t,.12,.18,700)},
  snoreCycle(){if(!this.ok())return;const c=this.ctx,t=c.currentTime+.02;
   const o=c.createOscillator();o.type='sawtooth';o.frequency.setValueAtTime(62,t);o.frequency.linearRampToValueAtTime(78,t+1.1);
@@ -525,7 +528,9 @@ for(const ev of['pointerdown','touchend','keydown'])document.addEventListener(ev
 
 /* ===== Händelser ===== */
 function onEvent(e){if(!e||(+e.t)<joinT-3000)return;
- if(e.ty==='hit'){throwFx(e.p,e.q);if(e.q===me){try{navigator.vibrate&&navigator.vibrate([200,80,200])}catch(x){}}
+ if(e.ty==='throw'){onThrowEvent(e);return}
+ if(e.ty==='miss'){if(e.p===me)toast(`${esc(nameOf(e.q))} väjde undan!`);return}
+ if(e.ty==='hit'||e.ty==='hit2'){if(e.ty==='hit')throwFx(e.p,e.q);if(e.q===me){try{navigator.vibrate&&navigator.vibrate([200,80,200])}catch(x){}}
   toast(`<svg><use href="#i-sprit"/></svg><span><b>${esc(nameOf(e.p))}</b> sövde <b>${esc(nameOf(e.q))}</b> med mygg-sprit!</span>`)}
  else if(e.ty==='mhit'){if(e.q===me){SND.laugh();try{navigator.vibrate&&navigator.vibrate([300])}catch(x){}}toast(`<svg viewBox="0 0 48 60"><use href="#i-mon"/></svg><span>Tunnan-monstret tog <b>${esc(nameOf(e.q))}</b>! Zzz…</span>`)}
  else if(e.ty==='find'&&e.p!==me)toast(`<svg><use href="#i-tunna"/></svg><span><b>${esc(nameOf(e.p))}</b> hittade en silltunna vid ${esc(e.pl)}!</span>`)}
@@ -599,7 +604,7 @@ const allSearched=pl=>(searchedSet()[pl]||[]).length>=4;
 
 /* ===== Tunnan-monstren ===== */
 // Monstrens rörelse är "planer" som sparas som händelser, så alla mobiler ser samma monster. mi = vilket monster (0 eller 1).
-const MSP=11,MGRACE=1500,MOFF=5000,NMON=2;let MON=[];const monPending=[0,0],monVisPrev=[null,null];
+const MSP=11,MGRACE=1500,MOFF=1800,NMON=3;let MON=[];const monPending=[0,0,0],monVisPrev=[null,null,null];
 function monAdd(e){let p;try{p=typeof e.pl==='string'?JSON.parse(e.pl):e.pl}catch(x){return}if(!p||typeof p.n!=='number')return;p.mi=p.mi||0;p.id=e.id;const ex=MON.find(q=>q.n===p.n&&q.s===p.s&&q.mi===p.mi);if(ex){if(ex.id<=p.id)return;MON=MON.filter(q=>q!==ex)}MON.push(p);MON.sort((a,b)=>a.n-b.n)}
 const monPlans=mi=>META?MON.filter(p=>p.s===META.seed&&p.mi===mi):[];
 function planLen(p){let L=0,prev=p.f;for(const n of p.r){L+=hyp(NODES[prev].x,NODES[prev].y,NODES[n].x,NODES[n].y);prev=n}return L}
@@ -609,13 +614,13 @@ function monAt(mi,t){const P=monPlans(mi);let cur=null;for(const p of P){if(p.t0
  if(cur.k==='w'){const m={sx:NODES[cur.f].x,sy:NODES[cur.f].y,route:cur.r,t0:cur.t0,sp:cur.sp||MSP},q=posAt(m,t);return{x:q.x,y:q.y,vis:true,since:t-(cur.ap||0),moving:!q.done,sp:cur.sp||MSP,ln:[-.66,0,.66][(cur.n+cur.mi)%3]}}
  if(t<cur.t1){const a=cur.at&&NODES[cur.at];return{x:a?a.x:0,y:a?a.y:0,vis:false}}
  const n=NODES[cur.to];return{x:n.x,y:n.y,vis:true,since:t-cur.t1,moving:false,ln:[-.66,0,.66][(cur.n+cur.mi)%3]}}
-function monAppearNode(t,avoid,mi){const now=T();let best=null,bs=-1;const ok=[];const other=monAt(1-mi,t);
+function monAppearNode(t,avoid,mi){const now=T();let best=null,bs=-1;const ok=[];const others=[];for(let j=0;j<NMON;j++)if(j!==mi){const o=monAt(j,t);if(o&&o.vis)others.push(o)}
  for(const id in NODES){if(id===avoid)continue;const n=NODES[id];let sc=1e9;for(const pid in PL){const m=PL[pid].m||startM();const a=posAt(m,now),b=posAt(m,t);sc=Math.min(sc,hyp(n.x,n.y,a.x,a.y),hyp(n.x,n.y,b.x,b.y))}
-  if(other&&other.vis)sc=Math.min(sc,hyp(n.x,n.y,other.x,other.y)+40);if(sc>95)ok.push(id);if(sc>bs){bs=sc;best=id}}
+  for(const o of others)sc=Math.min(sc,hyp(n.x,n.y,o.x,o.y)+40);if(sc>95)ok.push(id);if(sc>bs){bs=sc;best=id}}
  return ok.length?ok[Math.floor(Math.random()*ok.length)]:best}
 function monWalk(from){const r=[];let prev=null,cur=from;const hops=2+Math.floor(Math.random()*4);for(let i=0;i<hops;i++){let nb=ADJ[cur].map(a=>a.to).filter(x=>x!==prev);if(!nb.length)nb=ADJ[cur].map(a=>a.to);const nx=nb[Math.floor(Math.random()*nb.length)];r.push(nx);prev=cur;cur=nx}return r}
 const monSp=()=>Math.random()<.35?23:MSP; // ibland springer tunnan fortare än spelarna
-const MLANE=[{ln:null},{ln:null}];
+const MLANE=[{ln:null},{ln:null},{ln:null}];
 function monLane(mi,M,now){const L=MLANE[mi],base=M.ln||0;if(!SV.active||SV.edge<0||!projEdge(SV.edge,M.x,M.y)){L.ln=null;return base}
  if(L.ln==null){L.ln=base;L.tgt=base;L.next=now+500;L.last=now}if(now>=L.next){L.tgt=laneE();L.next=now+650+Math.random()*400}
  const dt=Math.min(.1,Math.max(0,(now-L.last)/1000));L.last=now;const d=L.tgt-L.ln,stp=.8*dt;L.ln+=Math.abs(d)<stp?d:Math.sign(d)*stp;return L.ln}
@@ -638,7 +643,7 @@ function renderMonsters(now){const on=META&&META.status==='running'&&now>=META.s
   if(M&&monVisPrev[mi]!==null&&vis!==monVisPrev[mi]){smoke(M.x,M.y);if(inView(M.x,M.y)){if(vis)SND.appear();else SND.poff()}}
   monVisPrev[mi]=vis;if(!vis){g.style.display='none';continue}
   const ph=mi*1.7,grow=Math.min(1,Math.max(.25,M.since/300)),wob=M.moving?Math.sin(now/110+ph)*8:Math.sin(now/400+ph)*3,hop=M.moving?Math.abs(Math.sin(now/110+ph))*3:0;
-  g.style.display='';g.setAttribute('transform',`translate(${f1(M.x)},${f1(M.y-hop*K)}) scale(${(K*grow*(mi?-1:1)).toFixed(3)},${(K*grow).toFixed(3)}) rotate(${wob.toFixed(1)})`);g.setAttribute('opacity',M.since<MGRACE?(.55+.45*Math.abs(Math.sin(now/90))).toFixed(2):'1')}
+  g.style.display='';g.setAttribute('transform',`translate(${f1(M.x)},${f1(M.y-hop*K)}) scale(${(K*grow*(mi%2?-1:1)).toFixed(3)},${(K*grow).toFixed(3)}) rotate(${wob.toFixed(1)})`);g.setAttribute('opacity',M.since<MGRACE?(.55+.45*Math.abs(Math.sin(now/90))).toFixed(2):'1')}
  return out}
 
 
@@ -723,27 +728,26 @@ function drawStreet(now){stResize();const g=SC.ctx,W=SC.W,H=SC.H,ei=SV.edge,e=ED
  for(const it of MAPIT){if(it.e!==ei||CL[it.id]||!released(it,now))continue;const s=SV.down===e.a?it.t*len:len-it.t*len,yy=Y(s);if(yy<-40||yy>H+40)continue;const x=ln(SV.down===e.a?(it.ln||0):-(it.ln||0)),b=Math.sin(now/250+it.t*9)*3;
   dr.push({y:yy,f:()=>{g.fillStyle='rgba(0,0,0,.18)';g.beginPath();g.ellipse(x,yy+4,14,5,0,0,7);g.fill();const im=sprite('i-mys');if(ok(im))g.drawImage(im,x-18,yy-30+b,36,36)}})}
  SV.hits=[];
- for(const id in PL){if(id===me)continue;const q=dispPos(PL[id],now),s=sOf(q.x,q.y);if(s==null)continue;const yy=Y(s);if(yy<-50||yy>H+50)continue;const h=[...id].reduce((a,c)=>a+c.charCodeAt(0),0)%3,x=ln([-.66,0,.66][h]);SV.hits.push({id,x,y:yy});
+ for(const id in PL){if(id===me)continue;const q=dispPos(PL[id],now),s=sOf(q.x,q.y);if(s==null)continue;const yy=Y(s);if(yy<-50||yy>H+50)continue;const lo=laneOfPlayer(id,ei),x=ln(SV.down===e.a?lo:-lo);SV.hits.push({id,x,y:yy});
   dr.push({y:yy+20,f:()=>{if(th==='water'){const bi=sprite('boat');if(ok(bi))g.drawImage(bi,x-38,yy+2,76,38)}drawAvatar(g,id,x,yy,20,false,now)}})}
  for(let mi=0;mi<NMON;mi++){const M=monAt(mi,now);if(!M||!M.vis)continue;const s=sOf(M.x,M.y);if(s==null)continue;const yy=Y(s);if(yy<-90||yy>H+90)continue;const lnE=monLane(mi,M,now),x=ln(SV.down===e.a?lnE:-lnE),fast=M.sp>MSP;
-  dr.push({y:yy+10,f:()=>{g.save();g.globalAlpha=M.since<MGRACE?.5+.5*Math.abs(Math.sin(now/90)):1;g.translate(x,yy);g.rotate((M.moving?Math.sin(now/(fast?65:110)+mi):Math.sin(now/400))*.12);if(fast&&M.moving){g.strokeStyle='rgba(255,255,255,.7)';g.lineWidth=3;for(let i=0;i<3;i++){g.beginPath();g.moveTo(-26+i*26,22);g.lineTo(-26+i*26,40+i%2*8);g.stroke()}}if(mi)g.scale(-1,1);const im=sprite('i-mon');if(ok(im))g.drawImage(im,-34,-80,68,85);g.restore()}})}
+  dr.push({y:yy+10,f:()=>{g.save();g.globalAlpha=M.since<MGRACE?.5+.5*Math.abs(Math.sin(now/90)):1;g.translate(x,yy);g.rotate((M.moving?Math.sin(now/(fast?65:110)+mi):Math.sin(now/400))*.12);if(fast&&M.moving){g.strokeStyle='rgba(255,255,255,.7)';g.lineWidth=3;for(let i=0;i<3;i++){g.beginPath();g.moveTo(-26+i*26,22);g.lineTo(-26+i*26,40+i%2*8);g.stroke()}}if(mi%2)g.scale(-1,1);const im=sprite('i-mon');if(ok(im))g.drawImage(im,-34,-80,68,85);g.restore()}})}
  const myX=cx+SV.latV*LANE*(SV.down===e.a?1:1),bob=posAt((PL[me].m||startM()),now).done?0:Math.abs(Math.sin(now/120))*3;
  dr.push({y:py+20,f:()=>{if(th==='water'){const bi=sprite('boat');if(ok(bi))g.drawImage(bi,myX-44,py+2,88,44)}drawAvatar(g,me,myX,py-bob,24,true,now)}});
  const lnX=l=>cx+l*LANE,vS=(()=>{const a=dispPos(PL[me],now-150),s0=sOf(a.x,a.y);return s0==null?0:(sMe-s0)/.15})();gullGround(dr,g,now,sMe,Y,lnX);
- dr.sort((a,b)=>a.y-b.y);for(const d of dr)d.f();gullAir(g,now,sMe,vS,Y,lnX);
+ dr.sort((a,b)=>a.y-b.y);for(const d of dr)d.f();gullAir(g,now,sMe,vS,Y,lnX);drawFly(g,now,sOf,Y,lnX,e);
  // pil framåt/bakåt
  const m=PL[me].m||startM(),q=posAt(m,now);if(!q.done&&m.route&&m.route.length){const hd=m.route[q.k],upw=hd===SV.up;g.fillStyle='rgba(255,255,255,.75)';for(let i=1;i<=3;i++){const yy=py+(upw?-1:1)*(40+i*16)-((now/8)%16)*(upw?1:-1);g.beginPath();g.moveTo(myX-9,yy+(upw?6:-6));g.lineTo(myX,yy);g.lineTo(myX+9,yy+(upw?6:-6));g.lineWidth=3;g.strokeStyle='rgba(255,255,255,.7)';g.stroke()}}}
 /* ===== Måsen: flyger förbi på gatunivå och bajsar ===== */
-const GULL={g:null,nextCheck:0,cool:0,poops:[],splats:[],edge:-1};
+const GULL={g:null,pending:0,poops:[],splats:[],edge:-1};
 function gullGround(dr,g,now,sMe,Y,lnX){
- if(GULL.edge!==SV.edge){GULL.edge=SV.edge;GULL.poops=[];GULL.splats=[]}
+ if(GULL.edge!==SV.edge){GULL.edge=SV.edge;GULL.poops=[];GULL.splats=[];GULL.g=null;GULL.pending=now+700+Math.random()*1800}
  for(const sp of GULL.splats){const yy=Y(sp.s);if(yy<-30||yy>SC.H+30)continue;const x=lnX(sp.lat);dr.push({y:yy-30,f:()=>{const im=sprite('splat');if(ok(im))g.drawImage(im,x-22,yy-13,44,26)}})}
  for(const p of GULL.poops){if(p.landed)continue;const yy=Y(p.s),x=lnX(p.lat),f=Math.min(1,Math.max(0,(now-p.t0)/(p.t1-p.t0)));
   dr.push({y:yy-40,f:()=>{g.fillStyle=`rgba(60,40,20,${.15+.35*f})`;g.beginPath();g.ellipse(x,yy,8+14*f,4+6*f,0,0,7);g.fill();g.strokeStyle=`rgba(200,40,30,${.35+.4*f})`;g.lineWidth=2;g.beginPath();g.ellipse(x,yy,10+14*f,5+6*f,0,0,7);g.stroke()}})}}
 function gullAir(g,now,sMe,vS,Y,lnX){const W=SC.W,H=SC.H,p=PL[me];
- if(!GULL.g&&now>GULL.nextCheck&&now>GULL.cool&&!asleep(p,now)){GULL.nextCheck=now+3500+Math.random()*5000;
-  if(Math.random()<.4){const dir=Math.random()<.5?1:-1,n=Math.random()<.5?2:3;GULL.g={t0:now,dur:2600,dir,yb:H*(.16+Math.random()*.12),drops:(n===2?[.3,.62]:[.24,.48,.72]).map(f=>({f,done:false}))};SND.gull()}}
- const G=GULL.g;if(G){const f=(now-G.t0)/G.dur;if(f>1.05){GULL.g=null;GULL.cool=now+9000+Math.random()*12000}else{
+ if(!GULL.g&&GULL.pending&&now>=GULL.pending&&!asleep(p,now)){GULL.pending=0;const dir=Math.random()<.5?1:-1,n=1+Math.floor(Math.random()*3);GULL.g={t0:now,dur:2600,dir,yb:H*(.16+Math.random()*.12),drops:([[.45],[.3,.62],[.24,.48,.72]][n-1]).map(f=>({f,done:false}))};SND.gull()}
+ const G=GULL.g;if(G){const f=(now-G.t0)/G.dur;if(f>1.05){GULL.g=null}else{
   const x=G.dir>0?-70+(W+140)*f:W+70-(W+140)*f,y=G.yb+Math.sin(f*7)*12,fl=Math.floor(now/120)%2;
   for(const d of G.drops)if(!d.done&&f>=d.f){d.done=true;const T1=780,sT=sMe+vS*T1/1000,lat=Math.max(-1,Math.min(1,SV.lat+(Math.random()-.5)*.25));GULL.poops.push({x0:x,y0:y+10,s:sT,lat,t0:now,t1:now+T1});if(Math.random()<.4)SND.gull(1)}
   g.save();g.translate(x,y);if(G.dir<0)g.scale(-1,1);g.fillStyle='rgba(0,0,0,.12)';g.beginPath();g.ellipse(0,H*.5-y+40,30,8,0,0,7);g.restore();
@@ -754,6 +758,38 @@ function gullAir(g,now,sMe,vS,Y,lnX){const W=SC.W,H=SC.H,p=PL[me];
    if(Math.abs(sMe-pp.s)<3.2&&Math.abs(SV.lat-pp.lat)<.34&&!asleep(PL[me],now)){SLOW.until=now+20000;SLOW.on=true;reSpeed();SND.splat();try{navigator.vibrate&&navigator.vibrate([60,40,120])}catch(x){}toast('<svg viewBox="0 0 60 40"><use href="#i-gull"/></svg>Splat! Kletigt måsbajs under skorna – du går jättelångsamt i 20 sekunder.')}else SND.plopp()}}
  GULL.poops=GULL.poops.filter(p=>!p.landed||now-p.t1<100);
  if(now<SLOW.until){const left=Math.ceil((SLOW.until-now)/1000);g.font="900 13px Nunito,sans-serif";g.textAlign='center';g.textBaseline='bottom';g.lineWidth=4;g.strokeStyle='#fffaf1';g.strokeText(`Kletigt! ${left} s`,lnX(SV.latV),SC.H*.64-34);g.fillStyle='#6b4a2f';g.fillText(`Kletigt! ${left} s`,lnX(SV.latV),SC.H*.64-34)}}
+
+/* ===== Filer: synka egen fil när andra är på samma gata, krockar ===== */
+const LQ=[-.66,0,.66];
+const hashLane=id=>LQ[[...id].reduce((a,c)=>a+c.charCodeAt(0),0)%3];
+function laneOfPlayer(id,ei){const m=PL[id]&&PL[id].m;if(m&&m.le===ei&&m.ln!=null)return m.ln;return hashLane(id)}
+function edgeOfPlayer(id,now){const p=PL[id];if(!p)return -1;const L=locAt(p.m||startM(),now);return L.node?-1:(L.edge??-1)}
+const LSYNC={last:0};
+function laneSync(now){if(!SV.active||SV.edge<0)return;const p=PL[me];if(!p||!p.m)return;const ei=SV.edge;
+ if(!Object.keys(PL).some(id=>id!==me&&edgeOfPlayer(id,now)===ei))return;
+ const le=laneE(),q=LQ.reduce((a,b)=>Math.abs(b-le)<Math.abs(a-le)?b:a);if(p.m.ln===q&&p.m.le===ei)return;if(now-LSYNC.last<350)return;LSYNC.last=now;
+ const m={...p.m,ln:q,le:ei};p.m=m;net.updatePlayer(me,{m})}
+function checkBump(now){if(!SV.active||SV.edge<0)return;const p=PL[me];if(!p||asleep(p,now))return;const m=p.m||startM(),q=posAt(m,now),ei=SV.edge,e=EDGES[ei];
+ const mp=dispPos(p,now),mine=projEdge(ei,mp.x,mp.y);if(!mine)return;
+ const blockerAhead=dirSign=>{for(const id in PL){if(id===me)continue;const o=dispPos(PL[id],now),op=projEdge(ei,o.x,o.y);if(!op)continue;const ds=(op.s-mine.s)*dirSign;if(ds>0&&ds<4.5&&Math.abs(laneE()-laneOfPlayer(id,ei))<.4)return id}return null};
+ if(!q.done&&m.route&&m.route.length){const hd=m.route[q.k];if(hd!==e.a&&hd!==e.b)return;const dir=hd===e.b?1:-1,bl=blockerAhead(dir);
+  if(bl){const L=locAt(m,now);SV.keep=true;const nm={sx:L.x,sy:L.y,se:ei,sn:null,route:[],t0:now,sp:SPEED,ln:m.ln,le:m.le};p.m=nm;net.updatePlayer(me,{m:nm});SV.blocked={hd,dest:m.route[m.route.length-1],dir,since:now};SND.bump();if(now-(SV.bumpToast||0)>4000){SV.bumpToast=now;toast(`Krock med ${esc(PL[bl].name)}! Byt fil för att komma förbi.`)}}}
+ else if(SV.blocked){if(now-SV.blocked.since>12000){SV.blocked=null;return}if(!blockerAhead(SV.blocked.dir)&&now-SV.blocked.since>250){const b=SV.blocked;SV.blocked=null;moveVia(b.hd,b.dest)}}}
+// mygg-sprit i luften (gatuvyn)
+const FLY=[];
+function onThrowEvent(e){let d={};try{d=JSON.parse(e.pl||'{}')}catch(x){}const ft=d.ft||900,t1=(+e.t)+ft,now=T();if(now-(+e.t)>4000)return;
+ FLY.push({p:e.p,q:e.q,ln:d.ln||0,ei:d.ei,t0:+e.t,t1});throwFx(e.p,e.q);
+ if(e.q===me){SND.whoosh();toast(`<svg><use href="#i-sprit"/></svg><span><b>${esc(nameOf(e.p))}</b> kastar mygg-sprit på dig – väj!</span>`)}
+ if(controlled().includes(e.q))setTimeout(()=>resolveThrow(e.p,e.q,d.ln||0,d.ei),Math.max(0,t1-now))}
+function resolveThrow(by,q,ln,ei){const now=T(),p=PL[q];if(!p||asleep(p,now)||(p.z&&p.z.i>now))return;
+ let myLn;if(q===me&&SV.active&&SV.edge>=0&&SV.edge===ei)myLn=laneE();else if(q===me&&edgeOfPlayer(me,now)===ei&&!SV.active)myLn=ln;else if(q!==me)myLn=hashLane(q);else myLn=99;
+ if(Math.abs(myLn-ln)<.38){const z={s:Math.round(now+SLEEP),i:Math.round(now+SLEEP+15000),by};p.z=z;net.updatePlayer(q,{z});net.event({ty:'hit2',p:by,q,t:now})}
+ else if(q===me){toast('Du väjde undan mygg-spriten! 😅'.replace(' 😅',''),'good');net.event({ty:'miss',p:by,q,t:now})}}
+function drawFly(g,now,sOf,Y,lnX,e){for(const f of FLY){if(f.ei!==SV.edge||now>f.t1+50)continue;const A=PL[f.p],B=PL[f.q];if(!A||!B)continue;const a=dispPos(A,now),b=dispPos(B,now),sa=sOf(a.x,a.y),sb=sOf(b.x,b.y);if(sa==null||sb==null)continue;
+ const flip=SV.down===e.a?1:-1,xa=f.p===me?lnX(SV.latV):lnX(laneOfPlayer(f.p,SV.edge)*flip),xb=lnX(f.ln*flip),ya=Y(sa),yb=Y(sb),k=Math.min(1,Math.max(0,(now-f.t0)/(f.t1-f.t0)));
+ const x=xa+(xb-xa)*k,y=ya+(yb-ya)*k-Math.sin(k*Math.PI)*60;g.fillStyle='rgba(30,90,30,.25)';g.beginPath();g.ellipse(xb,yb+6,16*k+4,6*k+2,0,0,7);g.fill();
+ g.save();g.translate(x,y);g.rotate(k*10);const im=sprite('i-sprit');if(ok(im))g.drawImage(im,-15,-15,30,30);g.restore()}
+ for(let i=FLY.length-1;i>=0;i--)if(now>FLY[i].t1+300)FLY.splice(i,1)}
 
 function banner(txt){const b=$('#stTitle');b.textContent=txt;b.classList.add('on');clearTimeout(banner.t);banner.t=setTimeout(()=>b.classList.remove('on'),2200)}
 function streetTick(now){const c=$('#street'),p=PL[me];let act=false;
@@ -767,7 +803,7 @@ function streetTick(now){const c=$('#street'),p=PL[me];let act=false;
  const bm=$('#bMap');bm.style.display=act?'':'none';bm.textContent=SV.peek?'Gatuvy':'Karta';if(SV.shown)drawStreet(now)}
 function moveVia(first,dest){const now=T(),p=PL[me];if(!p||!running(now)||asleep(p,now))return;const L=locAt(p.m||startM(),now);if(L.node||L.edge==null||L.edge<0)return;
  let r=[first];if(dest&&dest!==first)r=r.concat(route({node:first},dest).slice(1));SV.keep=true;const m={sx:L.x,sy:L.y,se:L.edge,sn:null,route:r,t0:now,sp:curSpeed(me,now)};p.m=m;net.updatePlayer(me,{m});searching=null;dirty.sheet=true}
-function streetGo(dir){const now=T(),p=PL[me];if(!p||!SV.active)return;const m=p.m||startM(),q=posAt(m,now),hd=(m.route&&m.route.length&&!q.done)?m.route[q.k]:null;
+function streetGo(dir){SV.blocked=null;const now=T(),p=PL[me];if(!p||!SV.active)return;const m=p.m||startM(),q=posAt(m,now),hd=(m.route&&m.route.length&&!q.done)?m.route[q.k]:null;
  if(dir>0){if(hd===SV.up)return;moveVia(SV.up,SV.dest&&SV.dest!==SV.down?SV.dest:SV.up)}else{if(hd===SV.down)return;moveVia(SV.down,SV.down)}}
 {const c=$('#street');let t0=null;
  c.addEventListener('pointerdown',e=>{try{c.setPointerCapture(e.pointerId)}catch(x){}t0={x:e.clientX,y:e.clientY,vy:e.clientY,lat:SV.lat,moved:false}});
@@ -817,7 +853,7 @@ function frame(){const now=T();applyCam(now);
   const wi=[0,.2,.4,.6,.8].filter(w=>now>=META.startAt+w*META.dur*60000).length,hk=wi+'|'+hintOn(now);if(hk!==waveKey){waveKey=hk;dirty.items=dirty.places=dirty.sheet=true}
   if(lastWave>=0&&wi>lastWave&&wi>1)toast('Nya skatter har dykt upp på ön!','good');if(now>=META.startAt)lastWave=wi;}
  if(dirty.items){dirty.items=false;renderItems(now)}if(dirty.places){dirty.places=false;renderPlaces(now)}
- renderPlayers(now);streetTick(now);musicTick(now);hudTick(now);requestAnimationFrame(frame)}
+ renderPlayers(now);streetTick(now);if(META&&META.status==='running'&&now>=META.startAt){laneSync(now);checkBump(now)}musicTick(now);hudTick(now);requestAnimationFrame(frame)}
 
 /* ===== HUD, ark och knappar ===== */
 let hudT=0;
@@ -874,7 +910,7 @@ function openThrow(target){const now=T(),n=st(me).sprit;const others=Object.keys
  if(target&&n<1){toast(`Det där är ${esc(PL[target].name)}. Hitta mygg-sprit på genvägarna för att kunna söva hen!`);return}
  const row=id=>{const p=PL[id],sl=asleep(p,now),im=p.z&&p.z.i>now&&!sl,ss=sameStreet(me,id,now);return`<div class="r">${avHTML(id,40)}<div class="n">${esc(p.name)}<small>${sl?'Sover':im?'Skyddad en stund':ss?'På din gata!':'Inte på din gata'}</small></div><button class="btn" data-t="${esc(id)}"${sl||im||n<1||!ss?' disabled':''}>Kasta</button></div>`};
  const list=(target?[target,...others.filter(x=>x!==target)]:others).sort((a,b)=>sameStreet(me,b,now)-sameStreet(me,a,now));
- openModal(`<h2>Kasta mygg-sprit</h2><p class="mut">${n<1?'Du har ingen mygg-sprit. Den finns bara på genvägarna: de streckade stigarna och båtarna.':`Du har ${n} st. Du kan bara kasta på någon som är på samma gata som du. Den som träffas somnar i 20 sekunder.`}</p><div class="lb">${list.map(row).join('')||'<p>Inga andra spelare än.</p>'}</div>`);
+ openModal(`<h2>Kasta mygg-sprit</h2><p class="mut">${n<1?'Du har ingen mygg-sprit. Den finns bara på genvägarna: de streckade stigarna och båtarna.':`Du har ${n} st. Du kan bara kasta på någon som är på samma gata som du. Spriten flyger mot hen – den som är snabb kan väja undan. Den som träffas somnar i 20 sekunder.`}</p><div class="lb">${list.map(row).join('')||'<p>Inga andra spelare än.</p>'}</div>`);
  $('#mBody').querySelectorAll('[data-t]').forEach(b=>b.onclick=async()=>{closeModal();await throwAt(me,b.dataset.t)})}
 $('#gear').onclick=()=>openMenu();$('#lbMenu').onclick=()=>openMenu();
 function openMenu(){const s=META?.status||'lobby',myBots=BOTS.length;
@@ -933,13 +969,13 @@ for(const id of['#fCam','#fPick'])$(id).onchange=async e=>{const f=e.target.file
 $('#pfGo').onclick=async()=>{const name=$('#pfName').value.trim().slice(0,14);if(!name){$('#pfName').focus();toast('Skriv ditt namn först');return}$('#pfGo').disabled=true;
  try{if(!me){me='p'+Math.random().toString(36).slice(2,10);ls.set('tunnan-pid-'+GID,me)}const o={name,color:pfColor,bot:false};if(!PL[me]){o.m=startM();o.joined=T();o.z=null}
   await net.upsertPlayer(me,o);await net.setAvatar(me,pfImg);editing=false;screen=null;updateScreens();renderMe();wake()}finally{$('#pfGo').disabled=false}};
-function cartoon(file){return new Promise((res,rej)=>{const img=new Image();img.onload=()=>{try{const N=144,c=document.createElement('canvas');c.width=c.height=N;const x=c.getContext('2d');const s=Math.min(img.width,img.height),sx=(img.width-s)/2,sy=Math.max(0,(img.height-s)/2-s*.06);x.drawImage(img,sx,sy,s,s,0,0,N,N);
+function cartoon(file){return new Promise((res,rej)=>{const img=new Image();img.onload=()=>{try{const N=176,c=document.createElement('canvas');c.width=c.height=N;const x=c.getContext('2d');const sz=Math.min(img.width,img.height),sx=(img.width-sz)/2,sy=Math.max(0,(img.height-sz)/2-sz*.05);x.drawImage(img,sx,sy,sz,sz,0,0,N,N);
+ // fish-eye: mitten förstoras kraftigt, kanterna trycks ihop
  const src=x.getImageData(0,0,N,N).data,out=x.createImageData(N,N),o=out.data,h=N/2;
- for(let y=0;y<N;y++)for(let xx=0;xx<N;xx++){const dx=(xx-h)/h,dy=(y-h)/h,r=Math.hypot(dx,dy);let f=1;if(r<1&&r>0)f=Math.pow(r,1.5)/r;const px=Math.min(N-1,Math.max(0,Math.round(h+dx*f*h))),py=Math.min(N-1,Math.max(0,Math.round(h+dy*f*h))),si=(py*N+px)*4,di=(y*N+xx)*4;o[di]=src[si];o[di+1]=src[si+1];o[di+2]=src[si+2];o[di+3]=255}
- const g=new Float32Array(N*N);for(let i=0;i<N*N;i++)g[i]=.3*o[i*4]+.59*o[i*4+1]+.11*o[i*4+2];const res2=new Uint8ClampedArray(o);
- for(let y=1;y<N-1;y++)for(let xx=1;xx<N-1;xx++){const i=y*N+xx,G=(a,b)=>g[(y+b)*N+xx+a];const gx=-G(-1,-1)-2*G(-1,0)-G(-1,1)+G(1,-1)+2*G(1,0)+G(1,1),gy=-G(-1,-1)-2*G(0,-1)-G(1,-1)+G(-1,1)+2*G(0,1)+G(1,1),mag=Math.hypot(gx,gy),l=g[i];
-  for(let ch=0;ch<3;ch++){let v=l+(o[i*4+ch]-l)*1.45;v=Math.round(Math.max(0,Math.min(255,v))/255*5)/5*255;if(mag>70)v*=Math.max(.15,1-(mag-70)/120);res2[i*4+ch]=v}}
- out.data.set(res2);x.putImageData(out,0,0);URL.revokeObjectURL(img.src);res(c.toDataURL('image/jpeg',.8))}catch(e){rej(e)}};img.onerror=rej;img.src=URL.createObjectURL(file)})}
+ const samp=(fx,fy,ch)=>{const x0=Math.floor(fx),y0=Math.floor(fy),ax=fx-x0,ay=fy-y0,cl=v=>Math.min(N-1,Math.max(0,v)),i=(yy,xx)=>(cl(yy)*N+cl(xx))*4+ch;return src[i(y0,x0)]*(1-ax)*(1-ay)+src[i(y0,x0+1)]*ax*(1-ay)+src[i(y0+1,x0)]*(1-ax)*ay+src[i(y0+1,x0+1)]*ax*ay};
+ for(let y=0;y<N;y++)for(let xx=0;xx<N;xx++){const dx=(xx-h)/h,dy=(y-h)/h,r=Math.hypot(dx,dy),di=(y*N+xx)*4;let f=1;if(r>0&&r<1){const rs=(Math.exp(r*2.2)-1)/(Math.exp(2.2)-1);f=rs/r}else if(r>=1)f=1;
+  const fx=h+dx*f*h,fy=h+dy*f*h,vig=r<1?1-Math.pow(r,4)*.35:.6;for(let ch=0;ch<3;ch++)o[di+ch]=Math.min(255,samp(fx,fy,ch)*vig*1.04);o[di+3]=255}
+ x.putImageData(out,0,0);URL.revokeObjectURL(img.src);res(c.toDataURL('image/jpeg',.82))}catch(e){rej(e)}};img.onerror=rej;img.src=URL.createObjectURL(file)})}
 
 /* ===== Testspelare ===== */
 const BS={};
