@@ -124,6 +124,11 @@ p{margin:0}
 #sleep .z{font:400 90px 'Lilita One',sans-serif;animation:zz 1.6s ease-in-out infinite}
 #sleep .t{font:400 64px 'Lilita One',sans-serif;color:var(--trim)}
 @keyframes zz{50%{transform:translateY(-12px) rotate(-6deg)}}
+#street{position:fixed;inset:0;width:100vw;height:100vh;height:100dvh;z-index:8;display:none;touch-action:none;opacity:0;transform:scale(1.4);transition:opacity .45s ease,transform .55s cubic-bezier(.2,.8,.2,1);background:#a9b98a}
+#street.on{display:block}
+#street.in{opacity:1;transform:none}
+#stTitle{position:fixed;left:8px;right:8px;top:calc(max(8px,env(safe-area-inset-top)) + 64px);z-index:9;text-align:center;pointer-events:none;font:400 26px 'Lilita One',sans-serif;color:#fff;text-shadow:0 2px 0 #7a2419,0 4px 12px #0008;opacity:0;transition:opacity .4s}
+#stTitle.on{opacity:1}
 #count{position:fixed;inset:0;z-index:26;display:none;place-items:center;pointer-events:none;font:400 min(40vw,220px) 'Lilita One',sans-serif;color:#fff;text-shadow:0 6px 0 var(--falu2),0 10px 30px #0008}
 #count.on{display:grid}
 .podium{display:flex;align-items:flex-end;justify-content:center;gap:8px}
@@ -168,6 +173,7 @@ hr{border:0;border-top:2px dashed #e3d8c4;margin:4px 0;width:100%}
 
 <svg id="map" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 822"><g id="base"></g><polyline id="routeL" fill="none" stroke="#e6c66e" stroke-width="4" stroke-dasharray="2 7" stroke-linecap="round" vector-effect="non-scaling-stroke"/><g id="itemsL"></g><g id="placesL"></g><g id="monL"><g id="monG0" style="display:none"><use href="#i-mon" x="-22" y="-46" width="44" height="55"/></g><g id="monG1" style="display:none"><use href="#i-mon" x="-22" y="-46" width="44" height="55"/></g></g><g id="playersL"></g><g id="fx"></g></svg>
 
+<canvas id="street"></canvas><div id="stTitle"></div>
 <div id="hud" hidden>
  <div class="chip" id="meChip"><span class="av" id="meAv" style="--s:38px"></span><div><div class="sc" id="meSc">0 p</div><div class="cnt" id="meCnt"></div></div></div>
  <div class="chip" id="conn">Ingen anslutning</div>
@@ -176,7 +182,7 @@ hr{border:0;border-top:2px dashed #e3d8c4;margin:4px 0;width:100%}
 </div>
 <div id="bottom" hidden>
  <div id="sheetWrap"></div>
- <div class="bar"><button class="btn w" id="bLb"><svg><use href="#i-trophy"/></svg>Topplista</button><button class="btn" id="bThrow"><svg><use href="#i-sprit"/></svg>Kasta <span class="badge" id="spN">0</span></button></div>
+ <div class="bar"><button class="btn y" id="bMap" style="flex:.8;display:none">Karta</button><button class="btn w" id="bLb"><svg><use href="#i-trophy"/></svg>Topplista</button><button class="btn" id="bThrow"><svg><use href="#i-sprit"/></svg>Kasta <span class="badge" id="spN">0</span></button></div>
 </div>
 <div id="toasts"></div>
 <div id="sleep"><div class="z">Zzz</div><h2 style="color:#fff" id="slBy">Du blev träffad av mygg-sprit!</h2><div class="t" id="slT">20</div><p>Du vaknar snart…</p></div>
@@ -222,7 +228,8 @@ hr{border:0;border-top:2px dashed #e3d8c4;margin:4px 0;width:100%}
   <div class="rule"><svg><use href="#i-kraft"/></svg><span><b>4 p</b> Kräfta, 20 st.</span></div>
   <div class="rule"><svg><use href="#i-raka"/></svg><span><b>2 p</b> Räka, 40 st. Ligger också längs vägarna.</span></div>
   <div class="rule"><svg viewBox="0 0 48 60"><use href="#i-mon"/></svg><span><b>Två Tunnan-monster</b> strövar runt på ön. Går du på ett av dem somnar du i 10 sekunder. Ibland försvinner de i ett poff och dyker upp någon annanstans!</span></div>
-  <div class="rule"><svg><use href="#i-sprit"/></svg><span><b>Mygg-sprit</b> finns bara på genvägarna. Kasta den på någon så somnar hen i 20 sekunder.</span></div>
+  <div class="rule"><svg><use href="#i-mys"/></svg><span><b>Gatuvy</b> När du går på en väg zoomar spelet in till gatan. Dra fingret åt sidan för att styra mot stjärnorna och bort från monstren, uppåt för att gå framåt och nedåt för att vända.</span></div>
+  <div class="rule"><svg><use href="#i-sprit"/></svg><span><b>Mygg-sprit</b> finns bara på genvägarna. Kasta den på någon som är på samma gata, så somnar hen i 20 sekunder.</span></div>
  </div>
  <p class="mut">Spelet tar slut när tiden är ute eller när alla skatter är hittade. Längs vägarna syns bara gula stjärnor. Vad som gömmer sig där får du veta först när du går på dem – ibland är det en nitlott! Nya skatter dyker upp under spelets gång. Tryck på en plats eller en vit prick på kartan för att gå dit.</p>
  <hr>
@@ -334,7 +341,7 @@ function genItems(seed){
  const pids=PLACES.map(p=>p.id),roadE=EDGES.filter(e=>!e.sc),shortE=EDGES.filter(e=>e.sc);
  shuffle(pids,R).slice(0,8).forEach((pl,i)=>out.push({id:'i'+n++,ty:'t',pl,sp:Math.floor(R()*4),w:W[[0,1,1,2,2,3,4,4][i]]}));
  const hid=ty=>out.push({id:'i'+n++,ty,pl:pids[Math.floor(R()*pids.length)],sp:Math.floor(R()*4),w:pickW()});
- const SE=startEdge(seed);const onEdge=(ty,e,t,w)=>{if(e.i===SE&&Math.abs(t-.5)<.25)t=t<.5?.2:.8;const A=NODES[e.a],B=NODES[e.b];out.push({id:'i'+n++,ty,e:e.i,x:A.x+(B.x-A.x)*t,y:A.y+(B.y-A.y)*t,w})};
+ const SE=startEdge(seed);const onEdge=(ty,e,t,w)=>{if(e.i===SE&&Math.abs(t-.5)<.25)t=t<.5?.2:.8;const A=NODES[e.a],B=NODES[e.b];out.push({id:'i'+n++,ty,e:e.i,t,ln:[-.66,0,.66][Math.floor(R()*3)],x:A.x+(B.x-A.x)*t,y:A.y+(B.y-A.y)*t,w})};
  const rk=4+Math.floor(R()*5),rr=10+Math.floor(R()*9);
  for(let i=0;i<20-rk;i++)hid('k');for(let i=0;i<40-rr;i++)hid('r');
  for(let i=0;i<rk;i++)onEdge('k',roadE[Math.floor(R()*roadE.length)],.15+R()*.7,pickW());
@@ -450,7 +457,7 @@ const NITS=['Nitlott! Bara en gammal gummistövel.','Nitlott! Bara tång och en 
 const cap=s=>s[0].toUpperCase()+s.slice(1);
 async function search(pid,pl,sp){const now=T();const list=HID.filter(it=>it.pl===pl&&it.sp===sp&&released(it,now)&&!CL[it.id]&&!pend.has(it.id));const got=[];for(const it of list)if(await claim(pid,it))got.push(it);return got}
 let throwLock=0;
-async function throwAt(pid,q){const now=T();if(now<throwLock&&pid===me)return;if(st(pid).sprit<1||asleep(PL[pid],now))return false;const t=PL[q];if(!t)return false;if(t.z&&t.z.i>now){if(pid===me)toast(`${esc(t.name)} är skyddad en liten stund till.`);return false}
+async function throwAt(pid,q){const now=T();if(now<throwLock&&pid===me)return;if(st(pid).sprit<1||asleep(PL[pid],now))return false;const t=PL[q];if(!t)return false;if(!sameStreet(pid,q,now)){if(pid===me)toast(`${esc(t.name)} är inte på din gata.`);return false}if(t.z&&t.z.i>now){if(pid===me)toast(`${esc(t.name)} är skyddad en liten stund till.`);return false}
  if(pid===me)throwLock=now+1500;const ok=await net.throwAt(pid,q);if(!ok&&pid===me)toast(`Missade! ${esc(t.name)} var skyddad.`);return ok}
 async function checkEnd(){if(!META||META.status!=='running'||!FOOD.length)return;if(FOOD.every(it=>CL[it.id])){await net.setMeta({status:'ended'})}}
 
@@ -550,7 +557,7 @@ const cam={x:0,y:0,w:520,follow:true};let K=1,CW=1,CH=1,lastK=0;
 function applyCam(now){const svg=$('#map');CW=svg.clientWidth||innerWidth;CH=svg.clientHeight||innerHeight;
  const maxW=Math.max(MW*1.15,MH*1.15*CW/CH);cam.w=Math.min(Math.max(cam.w,200),maxW);K=cam.w/CW;const h=CH*K;
  if(cam.follow&&me&&PL[me]){const p=dispPos(PL[me],now);cam.x=p.x-cam.w/2;cam.y=p.y-h*.42}
- const mx=60*K;cam.x=cam.w>=MW?(MW-cam.w)/2:Math.min(Math.max(cam.x,-mx),MW-cam.w+mx);cam.y=h>=MH?(MH-h)/2:Math.min(Math.max(cam.y,-mx),MH-h+mx);
+ cam.x=Math.min(Math.max(cam.x,-cam.w*.35),MW-cam.w*.65);cam.y=Math.min(Math.max(cam.y,-h*.3),MH-h*.45);
  svg.setAttribute('viewBox',`${f1(cam.x)} ${f1(cam.y)} ${f1(cam.w)} ${f1(h)}`);if(Math.abs(K-lastK)/(lastK||1)>.02){lastK=K;dirty.items=dirty.places=true}}
 function zoomAt(px,py,w){const r=$('#map').getBoundingClientRect(),wx=cam.x+(px-r.left)*K,wy=cam.y+(py-r.top)*K;cam.w=w;const k2=Math.min(Math.max(w,200),Math.max(MW*1.15,MH*1.15*CW/CH))/CW;cam.x=wx-(px-r.left)*k2;cam.y=wy-(py-r.top)*k2}
 function dispPos(p,now){const m=p.m||startM();if(p.z&&p.z.s>now){const hit=p.z.s-(p.z.d||SLEEP);if((m.t0||0)<hit)return posAt(m,hit)}return posAt(m,now)}
@@ -588,9 +595,9 @@ function planLen(p){let L=0,prev=p.f;for(const n of p.r){L+=hyp(NODES[prev].x,NO
 const planEnd=p=>p.k==='w'?p.t0+planLen(p)/MSP*1000:p.t1;
 const planEndNode=p=>p.k==='w'?(p.r.length?p.r[p.r.length-1]:p.f):p.to;
 function monAt(mi,t){const P=monPlans(mi);let cur=null;for(const p of P){if(p.t0<=t)cur=p;else break}if(!cur)return null;
- if(cur.k==='w'){const m={sx:NODES[cur.f].x,sy:NODES[cur.f].y,route:cur.r,t0:cur.t0,sp:MSP},q=posAt(m,t);return{x:q.x,y:q.y,vis:true,since:t-(cur.ap||0),moving:!q.done}}
+ if(cur.k==='w'){const m={sx:NODES[cur.f].x,sy:NODES[cur.f].y,route:cur.r,t0:cur.t0,sp:MSP},q=posAt(m,t);return{x:q.x,y:q.y,vis:true,since:t-(cur.ap||0),moving:!q.done,ln:[-.66,0,.66][(cur.n+cur.mi)%3]}}
  if(t<cur.t1){const a=cur.at&&NODES[cur.at];return{x:a?a.x:0,y:a?a.y:0,vis:false}}
- const n=NODES[cur.to];return{x:n.x,y:n.y,vis:true,since:t-cur.t1,moving:false}}
+ const n=NODES[cur.to];return{x:n.x,y:n.y,vis:true,since:t-cur.t1,moving:false,ln:[-.66,0,.66][(cur.n+cur.mi)%3]}}
 function monAppearNode(t,avoid,mi){const now=T();let best=null,bs=-1;const ok=[];const other=monAt(1-mi,t);
  for(const id in NODES){if(id===avoid)continue;const n=NODES[id];let sc=1e9;for(const pid in PL){const m=PL[pid].m||startM();const a=posAt(m,now),b=posAt(m,t);sc=Math.min(sc,hyp(n.x,n.y,a.x,a.y),hyp(n.x,n.y,b.x,b.y))}
   if(other&&other.vis)sc=Math.min(sc,hyp(n.x,n.y,other.x,other.y)+40);if(sc>95)ok.push(id);if(sc>bs){bs=sc;best=id}}
@@ -605,7 +612,8 @@ function monTick(now){const hum=Object.keys(PL).filter(id=>!PL[id].bot).sort(),r
   else{const t0=Math.max(planEnd(last),now-500),at=planEndNode(last);if(Math.random()<.35){const t1=t0+MOFF;p={s,mi,n,k:'p',at,to:monAppearNode(t1,at,mi),t0,t1}}else p={s,mi,n,k:'w',f:at,r:monWalk(at),t0,ap:last.ap||0}}
   net.event({ty:'mon',pl:JSON.stringify(p),t:now})}}
 function checkMonster(now,Ms){for(const M of Ms){if(!M||!M.vis||M.since<MGRACE)continue;for(const id of controlled()){const p=PL[id];if(!p||asleep(p,now)||(p.z&&p.z.i>now))continue;const q=dispPos(p,now);
- if(hyp(q.x,q.y,M.x,M.y)<11){const z={s:Math.round(now+10000),i:Math.round(now+18000),by:'monster',d:10000};p.z=z;net.updatePlayer(id,{z});net.event({ty:'mhit',q:id,t:now})}}}}
+ let hit;if(id===me&&SV.active&&SV.edge>=0){const a=projEdge(SV.edge,M.x,M.y),b=projEdge(SV.edge,q.x,q.y);hit=!!(a&&b&&Math.abs(a.s-b.s)<8&&Math.abs(laneE()-(M.ln||0))<.5)}else hit=hyp(q.x,q.y,M.x,M.y)<11;
+ if(hit){const z={s:Math.round(now+10000),i:Math.round(now+18000),by:'monster',d:10000};p.z=z;net.updatePlayer(id,{z});net.event({ty:'mhit',q:id,t:now})}}}}
 function inView(x,y){const h=CH*K;return x>cam.x-40*K&&x<cam.x+cam.w+40*K&&y>cam.y-40*K&&y<cam.y+h+40*K}
 function smoke(x,y){const g=document.createElementNS(NS,'g');g.setAttribute('transform',`translate(${f1(x)},${f1(y-14*K)}) scale(${K.toFixed(3)})`);
  g.innerHTML=[[-10,-4],[9,-6],[0,-14],[-6,8],[8,7],[0,0]].map(([a,b],i)=>`<circle cx="${a}" cy="${b}" r="6" fill="#d9d6d0" stroke="#9a958d" stroke-width="1"><animate attributeName="r" from="5" to="${15+i}" dur=".7s" fill="freeze"/><animate attributeName="opacity" from="1" to="0" dur=".75s" fill="freeze"/></circle>`).join('');$('#fx').appendChild(g);setTimeout(()=>g.remove(),800)}
@@ -617,12 +625,123 @@ function renderMonsters(now){const on=META&&META.status==='running'&&now>=META.s
   g.style.display='';g.setAttribute('transform',`translate(${f1(M.x)},${f1(M.y-hop*K)}) scale(${(K*grow*(mi?-1:1)).toFixed(3)},${(K*grow).toFixed(3)}) rotate(${wob.toFixed(1)})`);g.setAttribute('opacity',M.since<MGRACE?(.55+.45*Math.abs(Math.sin(now/90))).toFixed(2):'1')}
  return out}
 
+
+/* ===== Gatuvy: styr din spelare på gatunivå ===== */
+const SV={on:ls.get('tunnan-gatuvy')!=='0',peek:false,active:false,shown:false,edge:-1,up:null,down:null,dest:null,lat:0,latV:0,mt0:null,hits:[]};
+const PX=11;
+const laneE=()=>SV.down===(EDGES[SV.edge]||{}).a?SV.lat:-SV.lat;
+function projEdge(ei,x,y){const e=EDGES[ei];if(!e)return null;const A=NODES[e.a],B=NODES[e.b],dx=B.x-A.x,dy=B.y-A.y,L2=dx*dx+dy*dy,t=((x-A.x)*dx+(y-A.y)*dy)/L2;if(t<-.03||t>1.03)return null;const px=A.x+dx*t,py=A.y+dy*t;if(hyp(x,y,px,py)>3)return null;return{t,s:t*e.len}}
+function sameStreet(a,b,now){const pa=PL[a],pb=PL[b];if(!pa||!pb)return false;const A=locAt(pa.m||startM(),now),B=locAt(pb.m||startM(),now);
+ const ea=A.node?null:A.edge,eb=B.node?null:B.edge;
+ if(ea!=null&&ea>=0){if(eb===ea)return true;if(B.node){const e=EDGES[ea];return B.node===e.a||B.node===e.b}return false}
+ if(A.node){if(B.node===A.node)return true;if(eb!=null&&eb>=0){const e=EDGES[eb];return e.a===A.node||e.b===A.node}}return false}
+// sprites
+const SPR={
+ vit:['0 0 40 40','<path d="M3 17L20 5l17 12z" fill="#b9553a" stroke="#7a2f1c" stroke-width=".8"/><rect x="6" y="17" width="28" height="17" fill="#fbf8f2" stroke="#b8b0a4" stroke-width=".8"/><rect x="9" y="21" width="6" height="5" fill="#8fb3dc" stroke="#fff"/><rect x="25" y="21" width="6" height="5" fill="#8fb3dc" stroke="#fff"/><rect x="17" y="23" width="6" height="11" fill="#6f8fb0"/><rect x="26" y="8" width="3" height="5" fill="#7a2f1c"/><path d="M2 34h36" stroke="#fff" stroke-width="2"/><g fill="#fff" stroke="#c9c1b4" stroke-width=".3"><path d="M2 39v-6l1-1.5 1 1.5v6zM6 39v-6l1-1.5 1 1.5v6zM32 39v-6l1-1.5 1 1.5v6zM36 39v-6l1-1.5 1 1.5v6z"/></g>'],
+ tree:['0 0 40 40','<rect x="18" y="24" width="4" height="15" fill="#6b4a2f"/><circle cx="20" cy="17" r="13" fill="#6f9a4f"/><circle cx="15" cy="13" r="6" fill="#80ab5c"/><circle cx="14" cy="14" r="2" fill="#c94a3a"/><circle cx="25" cy="20" r="2" fill="#c94a3a"/><circle cx="23" cy="10" r="2" fill="#c94a3a"/>'],
+ pine:['0 0 40 40','<path d="M20 1l9 14h-4l7 11h-5l5 8H8l5-8H8l7-11h-4z" fill="#3f6b3a"/><rect x="18" y="34" width="4" height="6" fill="#6b4a2f"/>'],
+ rock:['0 0 40 30','<path d="M2 28Q4 10 16 8q10-6 18 6 6 6 4 14z" fill="#c4b3a6" stroke="#8f7d70" stroke-width="1"/><path d="M12 17q6-2 10 2M25 12l4 7" stroke="#8f7d70" fill="none"/>'],
+ lamp:['0 0 20 40','<rect x="9" y="8" width="2.2" height="31" fill="#2f3438"/><path d="M4 8h12l-2.5-5h-7z" fill="#2f3438"/><circle cx="10" cy="9.5" r="2.6" fill="#f6d27a"/>'],
+ flag:['0 0 30 50','<rect x="4" y="2" width="2" height="47" fill="#f2f2f2" stroke="#999" stroke-width=".4"/><rect x="6" y="4" width="20" height="12" fill="#2b6cb5"/><rect x="6" y="8.5" width="20" height="3" fill="#f3c13a"/><rect x="11" y="4" width="3" height="12" fill="#f3c13a"/>'],
+ bench:['0 0 30 14','<rect x="1" y="2" width="28" height="4" fill="#a17b52"/><rect x="1" y="7" width="28" height="3" fill="#8b6a46"/><rect x="3" y="10" width="2" height="4" fill="#555"/><rect x="25" y="10" width="2" height="4" fill="#555"/>'],
+ flower:['0 0 20 14','<rect x="1" y="7" width="18" height="7" fill="#a17b52"/><circle cx="5" cy="6" r="3" fill="#d4567c"/><circle cx="10" cy="5" r="3" fill="#f3c13a"/><circle cx="15" cy="6" r="3" fill="#c76aa8"/>'],
+ reed:['0 0 20 20','<path d="M4 20V6M8 20V3M12 20V7M16 20V4" stroke="#7a8a33" stroke-width="1.6"/><path d="M8 3v4M16 4v4" stroke="#6b4a2f" stroke-width="2.4"/>'],
+ tunna:['0 0 32 32',document.getElementById('i-tunna').innerHTML],
+ buoy:['0 0 20 20','<circle cx="10" cy="12" r="7" fill="#d9362b" stroke="#fff" stroke-width="1.5"/><rect x="9" y="1" width="2" height="7" fill="#333"/>']};
+const IMG={};
+function sprite(key){if(IMG[key])return IMG[key];let vb,body;if(SPR[key])[vb,body]=SPR[key];else{const el=document.getElementById(key);vb=el.getAttribute('viewBox');body=el.innerHTML}
+ const im=new Image();im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vb}" width="240" height="${Math.round(240*vb.split(' ')[3]/vb.split(' ')[2])}">${body}</svg>`);IMG[key]=im;return im}
+const AR={rock:.75,lamp:2,flag:5/3,bench:14/30,flower:.7,boat:.5,'i-mon':60/48};
+const DEC={},POLY_A=LAND_A.map(([x,y])=>[x*S,y*S]);
+function streetDecor(ei){if(DEC[ei])return DEC[ei];const e=EDGES[ei],R=rng(ei*977+13),list=[];const mid=[(NODES[e.a].x+NODES[e.b].x)/2,(NODES[e.a].y+NODES[e.b].y)/2],th=e.boat?'water':e.sc?'trail':inPoly(mid[0],mid[1],POLY_A)&&!NODES[e.a].place&&!NODES[e.b].place?'rural':'village';
+ for(const side of[-1,1]){let s=-40;while(s<e.len+40){let k;const rr=R();
+  if(th==='village')k=rr<.36?'s-bod':rr<.66?'vit':rr<.72?'s-smul':rr<.86?'tree':rr<.93?'tunna':'flag';
+  else if(th==='trail')k=rr<.4?'rock':rr<.75?'pine':rr<.9?'reed':'tunna';
+  else if(th==='rural')k=rr<.3?'rock':rr<.52?'pine':rr<.74?'s-bod':rr<.84?'vit':rr<.93?'tree':'tunna';
+  else k=rr<.5?'boat':rr<.75?'buoy':'rock';
+  const w=({'s-bod':92,vit:96,'s-smul':96,tree:66,pine:62,rock:58,flag:34,tunna:30,reed:30,boat:80,buoy:22})[k]*(0.85+R()*.3);
+  list.push({k,side,s,w,off:R()*16});
+  if(th==='village'&&R()<.55)list.push({k:R()<.4?'lamp':R()<.5?'bench':'flower',side,s:s+w/PX*.55,w:R()<.4?18:30,off:-6,small:1});
+  s+=(w*.92+12+R()*26)/PX}}
+ return DEC[ei]={th,list}}
+const SC={W:0,H:0,dpr:1,ctx:null},AVIMG={};
+function avImg(id){const a=AV[id];if(!a)return null;const c=AVIMG[id];if(c&&c.src===a)return c.im;const im=new Image();im.src=a;AVIMG[id]={src:a,im};return im}
+function ok(im){return im&&im.complete&&im.naturalWidth>0}
+function stResize(){const c=$('#street'),d=Math.min(2,devicePixelRatio||1),W=c.clientWidth||innerWidth,H=c.clientHeight||innerHeight;if(SC.W!==W||SC.H!==H||SC.dpr!==d){c.width=Math.round(W*d);c.height=Math.round(H*d);SC.W=W;SC.H=H;SC.dpr=d}SC.ctx=c.getContext('2d');SC.ctx.setTransform(d,0,0,d,0,0)}
+function drawAvatar(g,id,x,y,r,isMe,now){const p=PL[id]||{},c=p.color||'#a8382b',sl=asleep(p,now);
+ g.save();g.globalAlpha=sl?.7:1;g.fillStyle='rgba(0,0,0,.25)';g.beginPath();g.ellipse(x,y+r*.95,r*.9,r*.3,0,0,7);g.fill();
+ if(isMe){g.strokeStyle='#e6c66e';g.lineWidth=5;g.beginPath();g.arc(x,y,r+5,0,7);g.stroke()}
+ g.fillStyle='#fff';g.beginPath();g.arc(x,y,r+2,0,7);g.fill();g.strokeStyle=c;g.lineWidth=4;g.stroke();
+ const im=avImg(id);g.save();g.beginPath();g.arc(x,y,r-1,0,7);g.clip();if(ok(im))g.drawImage(im,x-r,y-r,r*2,r*2);else{g.fillStyle=c;g.fillRect(x-r,y-r,r*2,r*2);g.fillStyle='#fff';g.font=`400 ${Math.round(r*.9)}px 'Lilita One',sans-serif`;g.textAlign='center';g.textBaseline='middle';g.fillText(initials(p.name),x,y+1)}g.restore();
+ g.font="900 12px Nunito,sans-serif";g.textAlign='center';g.textBaseline='top';g.lineWidth=4;g.strokeStyle='#1d2a30';g.lineJoin='round';const nm=isMe?'Du':(p.name||'');g.strokeText(nm,x,y+r+5);g.fillStyle='#fff';g.fillText(nm,x,y+r+5);
+ if(sl){g.font="400 18px 'Lilita One',sans-serif";g.strokeStyle='#2b6a3a';g.strokeText('Zzz',x+r,y-r-14);g.fillText('Zzz',x+r,y-r-14)}g.restore()}
+function drawStreet(now){stResize();const g=SC.ctx,W=SC.W,H=SC.H,ei=SV.edge,e=EDGES[ei],D=streetDecor(ei),th=D.th,len=e.len;
+ const dn=NODES[SV.down],sOf=(x,y)=>{const pr=projEdge(ei,x,y);if(!pr)return null;return SV.down===e.a?pr.s:len-pr.s};
+ const mp=dispPos(PL[me],now),sMe=sOf(mp.x,mp.y)??0,cx=W/2,py=H*.64,LANE=Math.min(W*.13,54),RH=LANE*1.7,Y=s=>py-(s-sMe)*PX;
+ SV.latV+=(SV.lat-SV.latV)*.25;
+ const sLo=sMe-(H-py)/PX-30,sHi=sMe+py/PX+30;
+ g.fillStyle=th==='water'?'#2f6f8f':th==='trail'||th==='rural'?'#c9b9ad':'#a9b98a';g.fillRect(0,0,W,H);
+ for(let k=Math.floor(sLo/7);k<sHi/7;k++){const R=rng(k*31+ei*7+1);for(let j=0;j<4;j++){const x=R()*W,yy=Y(k*7+R()*7);
+  if(th==='water'){g.strokeStyle='rgba(255,255,255,.22)';g.lineWidth=2;g.beginPath();g.moveTo(x-9,yy);g.quadraticCurveTo(x,yy-6,x+9,yy);g.stroke()}
+  else if(th==='trail'||th==='rural'){g.strokeStyle='rgba(120,100,90,.35)';g.lineWidth=1.4;g.beginPath();g.moveTo(x,yy);g.lineTo(x+R()*16-8,yy+12);g.stroke();if(R()<.35){g.fillStyle=R()<.5?'#9b6aa3':'#86a065';g.beginPath();g.arc(x+14,yy,3+R()*3,0,7);g.fill()}}
+  else{g.fillStyle=R()<.5?'#97ab76':'#bccb9e';g.beginPath();g.arc(x,yy,3+R()*5,0,7);g.fill()}}}
+ // vägbana
+ const top=Math.max(-20,Y(len+14)),bot=Math.min(H+20,Y(-14)),road=th==='water'?'rgba(255,255,255,.1)':th==='trail'?'#dcc8a0':th==='rural'?'#e6d8bb':'#ebe1cb',edge=th==='water'?'rgba(255,255,255,.35)':th==='trail'?'#a98d68':'#9c8a6c';
+ if(bot>top){g.fillStyle=road;g.fillRect(cx-RH,top,RH*2,bot-top);if(th!=='water'){g.fillStyle=edge;g.fillRect(cx-RH-5,top,5,bot-top);g.fillRect(cx+RH,top,5,bot-top)}
+  for(let k=Math.floor(Math.max(-14,sLo)/5);k<Math.min(len+14,sHi)/5;k++){const R=rng(k*13+ei*3);const yy=Y(k*5);g.fillStyle=th==='water'?'rgba(255,255,255,.15)':'rgba(110,90,70,.16)';for(let j=0;j<5;j++){g.beginPath();g.arc(cx-RH+R()*RH*2,yy-R()*PX*5,1.4+R()*2.2,0,7);g.fill()}}
+  if(th==='village'){g.strokeStyle='rgba(255,255,255,.55)';g.lineWidth=3;g.setLineDash([18,22]);g.lineDashOffset=-(sMe*PX)%40;g.beginPath();g.moveTo(cx,top);g.lineTo(cx,bot);g.stroke();g.setLineDash([])}}
+ // ändar: plats eller korsning
+ for(const[nid,s]of[[SV.up,len],[SV.down,0]]){const n=NODES[nid],yy=Y(s);if(yy<-260||yy>H+260)continue;
+  if(n.place){g.fillStyle=th==='water'?'#a17b52':'#ebe1cb';g.beginPath();g.ellipse(cx,yy,RH*1.9,52,0,0,7);g.fill();const im=sprite(n.s);if(ok(im))g.drawImage(im,cx-70,yy-150,140,140);
+   g.font="900 17px Nunito,sans-serif";g.textAlign='center';g.textBaseline='top';g.lineWidth=5;g.strokeStyle='#fffaf1';g.lineJoin='round';g.strokeText(n.n,cx,yy-8);g.fillStyle='#1d2a30';g.fillText(n.n,cx,yy-8)}
+  else{g.fillStyle=th==='water'?'#a17b52':'#ebe1cb';g.fillRect(0,yy-RH*.75,W,RH*1.5);g.fillStyle='#fff';g.strokeStyle='#1d2a30';g.lineWidth=2;g.beginPath();g.arc(cx,yy,7,0,7);g.fill();g.stroke()}}
+ // saker att rita, sorterade efter djup
+ const dr=[];
+ for(const d of D.list){const yy=Y(d.s);if(yy<-140||yy>H+160)continue;if(d.s<10&&d.s>-10&&NODES[SV.down].place)continue;if(Math.abs(d.s-len)<10&&NODES[SV.up].place)continue;
+  const side=SV.down===e.a?d.side:-d.side,x=cx+side*(RH+14+d.w/2+d.off);dr.push({y:yy,f:()=>{const im=sprite(d.k);if(!ok(im))return;const h=d.w*(AR[d.k]||1);g.drawImage(im,x-d.w/2,yy-h,d.w,h)}})}
+ const ln=x=>cx+x*LANE;
+ for(const it of MAPIT){if(it.e!==ei||CL[it.id]||!released(it,now))continue;const s=SV.down===e.a?it.t*len:len-it.t*len,yy=Y(s);if(yy<-40||yy>H+40)continue;const x=ln(SV.down===e.a?(it.ln||0):-(it.ln||0)),b=Math.sin(now/250+it.t*9)*3;
+  dr.push({y:yy,f:()=>{g.fillStyle='rgba(0,0,0,.18)';g.beginPath();g.ellipse(x,yy+4,14,5,0,0,7);g.fill();const im=sprite('i-mys');if(ok(im))g.drawImage(im,x-18,yy-30+b,36,36)}})}
+ SV.hits=[];
+ for(const id in PL){if(id===me)continue;const q=dispPos(PL[id],now),s=sOf(q.x,q.y);if(s==null)continue;const yy=Y(s);if(yy<-50||yy>H+50)continue;const h=[...id].reduce((a,c)=>a+c.charCodeAt(0),0)%3,x=ln([-.66,0,.66][h]);SV.hits.push({id,x,y:yy});
+  dr.push({y:yy+20,f:()=>{if(th==='water'){const bi=sprite('boat');if(ok(bi))g.drawImage(bi,x-38,yy+2,76,38)}drawAvatar(g,id,x,yy,20,false,now)}})}
+ for(let mi=0;mi<NMON;mi++){const M=monAt(mi,now);if(!M||!M.vis)continue;const s=sOf(M.x,M.y);if(s==null)continue;const yy=Y(s);if(yy<-90||yy>H+90)continue;const x=ln(SV.down===e.a?(M.ln||0):-(M.ln||0));
+  dr.push({y:yy+10,f:()=>{g.save();g.globalAlpha=M.since<MGRACE?.5+.5*Math.abs(Math.sin(now/90)):1;g.translate(x,yy);g.rotate((M.moving?Math.sin(now/110+mi):Math.sin(now/400))*.12);if(mi)g.scale(-1,1);const im=sprite('i-mon');if(ok(im))g.drawImage(im,-34,-80,68,85);g.restore()}})}
+ const myX=cx+SV.latV*LANE*(SV.down===e.a?1:1),bob=posAt((PL[me].m||startM()),now).done?0:Math.abs(Math.sin(now/120))*3;
+ dr.push({y:py+20,f:()=>{if(th==='water'){const bi=sprite('boat');if(ok(bi))g.drawImage(bi,myX-44,py+2,88,44)}drawAvatar(g,me,myX,py-bob,24,true,now)}});
+ dr.sort((a,b)=>a.y-b.y);for(const d of dr)d.f();
+ // pil framåt/bakåt
+ const m=PL[me].m||startM(),q=posAt(m,now);if(!q.done&&m.route&&m.route.length){const hd=m.route[q.k],upw=hd===SV.up;g.fillStyle='rgba(255,255,255,.75)';for(let i=1;i<=3;i++){const yy=py+(upw?-1:1)*(40+i*16)-((now/8)%16)*(upw?1:-1);g.beginPath();g.moveTo(myX-9,yy+(upw?6:-6));g.lineTo(myX,yy);g.lineTo(myX+9,yy+(upw?6:-6));g.lineWidth=3;g.strokeStyle='rgba(255,255,255,.7)';g.stroke()}}}
+function banner(txt){const b=$('#stTitle');b.textContent=txt;b.classList.add('on');clearTimeout(banner.t);banner.t=setTimeout(()=>b.classList.remove('on'),2200)}
+function streetTick(now){const c=$('#street'),p=PL[me];let act=false;
+ if(SV.on&&p&&META&&META.status==='running'&&now>=META.startAt){const m=p.m||startM(),sl=asleep(p,now),tt=sl?Math.min(now,Math.max(m.t0||0,p.z.s-(p.z.d||SLEEP))):now,L=locAt(m,tt),q=posAt(m,tt);
+  if(!L.node&&L.edge!=null&&L.edge>=0){act=true;const e=EDGES[L.edge],hd=(m.route&&m.route.length&&!q.done)?m.route[q.k]:null;
+   if(m.t0!==SV.mt0){SV.mt0=m.t0;if(m.route&&m.route.length)SV.dest=m.route[m.route.length-1]}
+   if(L.edge!==SV.edge){SV.edge=L.edge;SV.up=hd&&(hd===e.a||hd===e.b)?hd:e.b;SV.down=SV.up===e.a?e.b:e.a;const dn=NODES[SV.dest&&SV.dest!==SV.down?SV.dest:SV.up];banner(e.boat?'All ombord!':dn&&dn.place?`Mot ${dn.n}`:'Mot korsningen')}}}
+ if(!act)SV.edge=-1;SV.active=act;const show=act&&!SV.peek;
+ if(show&&!SV.shown){SV.shown=true;sheetKey='';c.classList.add('on');requestAnimationFrame(()=>requestAnimationFrame(()=>c.classList.add('in')))}
+ else if(!show&&SV.shown){SV.shown=false;sheetKey='';c.classList.remove('in');setTimeout(()=>{if(!SV.shown)c.classList.remove('on')},480)}
+ const bm=$('#bMap');bm.style.display=act?'':'none';bm.textContent=SV.peek?'Gatuvy':'Karta';if(SV.shown)drawStreet(now)}
+function moveVia(first,dest){const now=T(),p=PL[me];if(!p||!running(now)||asleep(p,now))return;const L=locAt(p.m||startM(),now);if(L.node||L.edge==null||L.edge<0)return;
+ let r=[first];if(dest&&dest!==first)r=r.concat(route({node:first},dest).slice(1));const m={sx:L.x,sy:L.y,se:L.edge,sn:null,route:r,t0:now,sp:SPEED};p.m=m;net.updatePlayer(me,{m});searching=null;dirty.sheet=true}
+function streetGo(dir){const now=T(),p=PL[me];if(!p||!SV.active)return;const m=p.m||startM(),q=posAt(m,now),hd=(m.route&&m.route.length&&!q.done)?m.route[q.k]:null;
+ if(dir>0){if(hd===SV.up)return;moveVia(SV.up,SV.dest&&SV.dest!==SV.down?SV.dest:SV.up)}else{if(hd===SV.down)return;moveVia(SV.down,SV.down)}}
+{const c=$('#street');let t0=null;
+ c.addEventListener('pointerdown',e=>{try{c.setPointerCapture(e.pointerId)}catch(x){}t0={x:e.clientX,y:e.clientY,vy:e.clientY,lat:SV.lat,moved:false}});
+ c.addEventListener('pointermove',e=>{if(!t0)return;const dx=e.clientX-t0.x;if(Math.abs(dx)>8||Math.abs(e.clientY-t0.y)>8)t0.moved=true;const LANE=Math.min(SC.W*.13,54);
+  const flip=SV.down===(EDGES[SV.edge]||{}).a?1:1;SV.lat=Math.max(-1,Math.min(1,t0.lat+flip*dx/(LANE*1.6)));
+  const dy=e.clientY-t0.vy;if(dy<-36){streetGo(1);t0.vy=e.clientY}else if(dy>36){streetGo(-1);t0.vy=e.clientY}});
+ c.addEventListener('pointerup',e=>{if(t0&&!t0.moved){for(const h of SV.hits)if(hyp(e.clientX,e.clientY,h.x,h.y)<30){openThrow(h.id);break}}t0=null});
+ c.addEventListener('pointercancel',()=>{t0=null})}
+addEventListener('keydown',e=>{if(!SV.shown)return;if(e.key==='ArrowLeft')SV.lat=Math.max(-1,SV.lat-.66);else if(e.key==='ArrowRight')SV.lat=Math.min(1,SV.lat+.66);else if(e.key==='ArrowUp')streetGo(1);else if(e.key==='ArrowDown')streetGo(-1);else return;e.preventDefault()});
+$('#bMap').onclick=()=>{SV.peek=!SV.peek;if(SV.peek)cam.follow=true};
+
 let endSent=0,snoreNext=0;
 /* ===== Spelloop ===== */
 const lastChk={},warned={};let handledZ={},lastWave=-1,searching=null,endShown=false;
 function checkPickups(pid,now){const p=PL[pid];if(!p||!p.m)return;let t0=Math.max(lastChk[pid]||now,p.m.t0||0,now-120000);lastChk[pid]=now;
  const S2=[];for(let t=t0;t<now;t+=150)S2.push(posAt(p.m,t));S2.push(posAt(p.m,now));
- for(const it of MAPIT){if(CL[it.id]||pend.has(it.id)||!released(it,now))continue;for(const q of S2){if(Math.abs(q.x-it.x)<9&&Math.abs(q.y-it.y)<9&&hyp(q.x,q.y,it.x,it.y)<9){
+ const laneOn=pid===me&&SV.active;for(const it of MAPIT){if(CL[it.id]||pend.has(it.id)||!released(it,now))continue;if(laneOn&&(it.e!==SV.edge||Math.abs(laneE()-(it.ln||0))>.42))continue;for(const q of S2){if(Math.abs(q.x-it.x)<9&&Math.abs(q.y-it.y)<9&&hyp(q.x,q.y,it.x,it.y)<9){
   if(it.ty==='s'&&st(pid).sprit+(pendSp[pid]||0)>=MAXS){if(pid===me&&!warned[it.id]){warned[it.id]=1;toast('Du kan bara bära 3 mygg-sprit åt gången.')}break}claim(pid,it);break}}}}
 function checkSleep(now){for(const id of controlled()){const p=PL[id],z=p.z;if(!z||!(z.s>now)||handledZ[id]===z.s)continue;handledZ[id]=z.s;const hit=z.s-(z.d||SLEEP),m=p.m||startM();let ts=Math.min(now,Math.max(m.t0||0,hit));
   if(!posAt(m,ts).done){const L=locAt(m,ts);const nm={sx:L.x,sy:L.y,se:L.node?-1:L.edge,sn:L.node||null,route:[],t0:ts,sp:SPEED};p.m=nm;net.updatePlayer(id,{m:nm})}if(id===me){searching=null;dirty.sheet=true}}}
@@ -634,7 +753,7 @@ function frame(){const now=T();applyCam(now);
   const wi=[0,.2,.4,.6,.8].filter(w=>now>=META.startAt+w*META.dur*60000).length,hk=wi+'|'+hintOn(now);if(hk!==waveKey){waveKey=hk;dirty.items=dirty.places=dirty.sheet=true}
   if(lastWave>=0&&wi>lastWave&&wi>1)toast('Nya skatter har dykt upp på ön!','good');if(now>=META.startAt)lastWave=wi;}
  if(dirty.items){dirty.items=false;renderItems(now)}if(dirty.places){dirty.places=false;renderPlaces(now)}
- renderPlayers(now);hudTick(now);requestAnimationFrame(frame)}
+ renderPlayers(now);streetTick(now);hudTick(now);requestAnimationFrame(frame)}
 
 /* ===== HUD, ark och knappar ===== */
 let hudT=0;
@@ -653,6 +772,7 @@ function renderSheet(now){const p=PL[me];if(!p)return;const m=p.m||startM(),L=lo
  else if(now<META.startAt){key='wait';html=`<div class="hint">Gör dig redo…</div>`}
  else if(!moving&&L.node&&NODES[L.node].place){const n=NODES[L.node],hint=hintOn(now),left=HID.filter(it=>it.pl===n.id&&!CL[it.id]&&released(it,now)).length,done=searchedSet()[n.id]||[],all=done.length>=4;key=[n.id,searching?searching.sp:'-',hint?left:'',done.join(''),SRCH.k,dirty.sheet?Math.random():''].join('|');
   html=`<div class="sheet${all?' out':''}"><div class="hd"><svg viewBox="0 0 40 40"><use href="#${n.s}"/></svg><div><h3>${esc(n.n)}</h3><p class="mut">${all?'Du har letat överallt här. Kom tillbaka när nya skatter har dykt upp!':hint?(left?`${left} skatter gömda här just nu`:'Inget kvar här just nu'):'Var vill du leta?'}</p></div></div><div class="spots">${n.spots.map((s,i)=>{const d=done.includes(i),go=searching&&searching.sp===i;return`<button class="spot${go?' go':''}${d?' done':''}" data-sp="${i}"${searching||d?' disabled':''}>${esc(s)}<small>${go?'Letar…':d?'Genomsökt':'Leta här'}</small><i></i></button>`}).join('')}</div></div>`}
+ else if(SV.shown){key='st'+(moving?1:0);html=`<div class="hint">${moving?'Dra fingret ← → för att styra · ↑ framåt · ↓ vänd':'Dra fingret ↑ för att gå, eller tryck Karta för att välja mål'}</div>`}
  else{key=moving?'mv':'idle';html=moving?'':`<div class="hint">Tryck på en plats eller vit prick för att gå dit</div>`}
  dirty.sheet=false;if(key===sheetKey)return;sheetKey=key;$('#sheetWrap').innerHTML=html;
  const go=$('#sheetWrap .spot.go');if(go){go.classList.remove('go');void go.offsetWidth;go.classList.add('go')}}
@@ -675,7 +795,7 @@ $('#sheetWrap').addEventListener('click',async e=>{const b=e.target.closest('.sp
 function tap(cx,cy){if(!net||!PL[me])return;wake();const r=$('#map').getBoundingClientRect(),wx=cam.x+(cx-r.left)*K,wy=cam.y+(cy-r.top)*K,now=T();
  for(const id in PL){if(id===me)continue;const q=dispPos(PL[id],now);if(hyp(wx,wy,q.x,q.y)<20*K){openThrow(id);return}}
  let best=null,bd=1e9;for(const id in NODES){const n=NODES[id],d=hyp(wx,wy,n.x,n.y);if(d<bd){bd=d;best=id}}
- if(best&&bd<48*K){if(!running(now)){toast(META&&META.status==='running'?'Vänta på starten!':'Spelet har inte börjat.');return}cam.follow=true;moveTo(me,best)}
+ if(best&&bd<48*K){if(!running(now)){toast(META&&META.status==='running'?'Vänta på starten!':'Spelet har inte börjat.');return}cam.follow=true;SV.peek=false;moveTo(me,best)}
  else toast('Tryck på en plats eller en vit prick.')}
 
 /* ===== Modaler ===== */
@@ -688,9 +808,9 @@ $('#bLb').onclick=()=>openModal(`<h2>Topplista</h2><div class="lb">${lbRows()}</
 $('#bThrow').onclick=()=>openThrow(null);
 function openThrow(target){const now=T(),n=st(me).sprit;const others=Object.keys(PL).filter(id=>id!==me);
  if(target&&n<1){toast(`Det där är ${esc(PL[target].name)}. Hitta mygg-sprit på genvägarna för att kunna söva hen!`);return}
- const row=id=>{const p=PL[id],sl=asleep(p,now),im=p.z&&p.z.i>now&&!sl;return`<div class="r">${avHTML(id,40)}<div class="n">${esc(p.name)}<small>${sl?'Sover':im?'Skyddad en stund':`${st(id).score} p`}</small></div><button class="btn" data-t="${esc(id)}"${sl||im||n<1?' disabled':''}>Kasta</button></div>`};
- const list=target?[target,...others.filter(x=>x!==target)]:others;
- openModal(`<h2>Kasta mygg-sprit</h2><p class="mut">${n<1?'Du har ingen mygg-sprit. Den finns bara på genvägarna: de streckade stigarna och båtarna.':`Du har ${n} st. Den som träffas somnar i 20 sekunder.`}</p><div class="lb">${list.map(row).join('')||'<p>Inga andra spelare än.</p>'}</div>`);
+ const row=id=>{const p=PL[id],sl=asleep(p,now),im=p.z&&p.z.i>now&&!sl,ss=sameStreet(me,id,now);return`<div class="r">${avHTML(id,40)}<div class="n">${esc(p.name)}<small>${sl?'Sover':im?'Skyddad en stund':ss?'På din gata!':'Inte på din gata'}</small></div><button class="btn" data-t="${esc(id)}"${sl||im||n<1||!ss?' disabled':''}>Kasta</button></div>`};
+ const list=(target?[target,...others.filter(x=>x!==target)]:others).sort((a,b)=>sameStreet(me,b,now)-sameStreet(me,a,now));
+ openModal(`<h2>Kasta mygg-sprit</h2><p class="mut">${n<1?'Du har ingen mygg-sprit. Den finns bara på genvägarna: de streckade stigarna och båtarna.':`Du har ${n} st. Du kan bara kasta på någon som är på samma gata som du. Den som träffas somnar i 20 sekunder.`}</p><div class="lb">${list.map(row).join('')||'<p>Inga andra spelare än.</p>'}</div>`);
  $('#mBody').querySelectorAll('[data-t]').forEach(b=>b.onclick=async()=>{closeModal();await throwAt(me,b.dataset.t)})}
 $('#gear').onclick=()=>openMenu();$('#lbMenu').onclick=()=>openMenu();
 function openMenu(){const s=META?.status||'lobby',myBots=BOTS.length;
@@ -701,6 +821,7 @@ function openMenu(){const s=META?.status||'lobby',myBots=BOTS.length;
  <button class="btn w" id="mShare">Bjud in spelare (QR-kod)</button>
  <button class="btn w" id="mEdit">Ändra min spelare</button>
  <button class="btn w" id="mSnd">${SND.on?'Stäng av ljudet':'Slå på ljudet'}</button>
+ <button class="btn w" id="mStreet">${SV.on?'Stäng av gatuvyn (bara karta)':'Slå på gatuvyn'}</button>
  <button class="btn w" id="mBots">Lägg till 3 testspelare</button>
  ${myBots?`<button class="btn w" id="mNoBots">Ta bort mina testspelare (${myBots})</button>`:''}
  <hr><button class="btn w" id="mClear">Rensa alla spelare</button>
@@ -709,7 +830,7 @@ function openMenu(){const s=META?.status||'lobby',myBots=BOTS.length;
  const on=(id,fn)=>{const b=$('#'+id);if(b)b.onclick=fn};
  on('mEnd',async()=>{if(await ask('Avsluta spelet nu?','Avsluta'))net.setMeta({status:'ended'})});
  on('mNew',async()=>{if(await ask('Starta om till lobbyn? Poängen nollställs när nästa spel startar.','Till lobbyn'))net.setMeta({status:'lobby'})});
- on('mShare',openShare);on('mSnd',toggleSnd);on('mEdit',()=>{closeModal();showProfile(true)});
+ on('mShare',openShare);on('mSnd',toggleSnd);on('mStreet',()=>{SV.on=!SV.on;ls.set('tunnan-gatuvy',SV.on?'1':'0');closeModal();toast(SV.on?'Gatuvyn är på':'Gatuvyn är av – du spelar på kartan')});on('mEdit',()=>{closeModal();showProfile(true)});
  on('mBots',()=>{closeModal();addBots()});on('mNoBots',()=>{closeModal();const b=BOTS.slice();BOTS=[];saveBots();net.removePlayers(b)});
  on('mClear',async()=>{if(await ask('Ta bort alla spelare? Alla får skapa sin spelare igen.','Rensa')){BOTS=[];saveBots();net.removePlayers(null)}});
  on('mDb',async()=>{if(await ask(LOCAL?'Lämna testläget?':'Koppla från databasen på den här enheten?','Ja')){ls.del('tunnan-cfg');location.hash='';location.reload()}})}
@@ -760,7 +881,7 @@ const BS={};
 function saveBots(){ls.set('tunnan-bots-'+GID,JSON.stringify(BOTS))}
 async function addBots(){const nm=['Måsen Måns','Sälen Selma','Krabban Kurt','Tången Tove','Fyr-Frida','Snipan Sixten'];for(let i=0;i<3;i++){const id='b'+Math.random().toString(36).slice(2,9);BOTS.push(id);saveBots();await net.upsertPlayer(id,{name:nm[(BOTS.length-1)%nm.length],color:COLORS[(Object.keys(PL).length+i+3)%COLORS.length],bot:true,m:startM(),z:null,joined:T()})}toast('3 testspelare har gått med')}
 function botsTick(now){for(const id of BOTS){const p=PL[id];if(!p)continue;const b=BS[id]||(BS[id]={next:0,searched:false});if(now<b.next)continue;b.next=now+1200+Math.random()*1500;if(asleep(p,now))continue;const m=p.m||startM();if(!posAt(m,now).done)continue;const L=locAt(m,now);
-  if(st(id).sprit>0&&Math.random()<.25){const t=Object.keys(PL).filter(x=>x!==id&&!(PL[x].z&&PL[x].z.i>now));if(t.length){throwAt(id,t[Math.floor(Math.random()*t.length)]);continue}}
+  if(st(id).sprit>0&&Math.random()<.25){const t=Object.keys(PL).filter(x=>x!==id&&!(PL[x].z&&PL[x].z.i>now)&&sameStreet(id,x,now));if(t.length){throwAt(id,t[Math.floor(Math.random()*t.length)]);continue}}
   if(L.node&&NODES[L.node].place&&!b.searched){b.searched=true;b.next=now+SEARCHMS+300;const pl=L.node,sp=Math.floor(Math.random()*4);setTimeout(()=>search(id,pl,sp),SEARCHMS);continue}
   b.searched=false;const ids=Object.keys(NODES),t=Math.random()<.75?PLACES[Math.floor(Math.random()*PLACES.length)].id:ids[Math.floor(Math.random()*ids.length)];moveTo(id,t)}}
 
@@ -776,6 +897,7 @@ async function connect(cfg){showScreen('loading');LOCAL=!!cfg.local;net=LOCAL?ne
  joinT=T();stats();updateScreens();if(screen==='loading')showScreen('lobby');renderLobby()}
 $('#cfgGo').onclick=()=>{const url=$('#cfgUrl').value.trim().replace(/\/(rest\/v1)?\/*$/,'').replace(/\/+$/,''),key=$('#cfgKey').value.trim();if(!/^https?:\/\//.test(url)||key.length<20){$('#setupErr').textContent='Fyll i både Project URL och nyckeln.';return}const c={url,key};ls.set('tunnan-cfg',JSON.stringify(c));connect(c)};
 $('#cfgLocal').onclick=()=>{const c={local:true};ls.set('tunnan-cfg',JSON.stringify(c));connect(c)};
+if(location.search.includes('debug'))window.TDBG={moveTo,NODES,EDGES,SV,PL:()=>PL,me:()=>me,ITEMS:()=>ITEMS,CL:()=>CL};
 buildMap();requestAnimationFrame(frame);
 const cfg0=readCfg();if(cfg0)connect(cfg0);else showScreen('setup');
 }
