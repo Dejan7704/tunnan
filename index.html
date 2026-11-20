@@ -463,8 +463,9 @@ const NITS=['Nitlott! Bara en gammal gummistövel.','Nitlott! Bara tång och en 
 const cap=s=>s[0].toUpperCase()+s.slice(1);
 async function search(pid,pl,sp){const now=T();const list=HID.filter(it=>it.pl===pl&&it.sp===sp&&released(it,now)&&!CL[it.id]&&!pend.has(it.id));const got=[];for(const it of list)if(await claim(pid,it))got.push(it);return got}
 let throwLock=0;
-async function throwAt(pid,q){const now=T();if(now<throwLock&&pid===me)return;if(st(pid).sprit<1||asleep(PL[pid],now))return false;const t=PL[q];if(!t)return false;if(!sameStreet(pid,q,now)){if(pid===me)toast(`${esc(t.name)} är inte på din gata.`);return false}if(t.z&&t.z.i>now){if(pid===me)toast(`${esc(t.name)} är skyddad en liten stund till.`);return false}
- if(pid===me)throwLock=now+1200;const ei=edgeOfPlayer(q,now)>=0?edgeOfPlayer(q,now):edgeOfPlayer(pid,now);await net.event({ty:'throw',p:pid,q,t:now,pl:JSON.stringify({ln:laneOfPlayer(q,ei),ei,ft:900})});return true}
+const canHit=(pid,q,now)=>{const ea=edgeOfPlayer(pid,now);if(ea<0||edgeOfPlayer(q,now)!==ea)return false;return pid!==me||(SV.shown&&SV.edge===ea)};
+async function throwAt(pid,q){const now=T();if(now<throwLock&&pid===me)return;if(st(pid).sprit<1||asleep(PL[pid],now))return false;const t=PL[q];if(!t)return false;if(pid===me&&!SV.shown){toast('Du kan bara kasta mygg-sprit när du är ute på en gata.');return false}if(!canHit(pid,q,now)){if(pid===me)toast(`${esc(t.name)} är inte på din gata.`);return false}if(t.z&&t.z.i>now){if(pid===me)toast(`${esc(t.name)} är skyddad en liten stund till.`);return false}
+ if(pid===me)throwLock=now+1200;const ei=edgeOfPlayer(q,now),ln=laneOfPlayer(q,ei),k=Math.random().toString(36).slice(2,9);THR[k]={by:pid,q,ln,ei,t:now};setTimeout(()=>throwFallback(k),900+2600);await net.event({ty:'throw',p:pid,q,t:now,pl:JSON.stringify({ln,ei,ft:900,k})});return true}
 async function checkEnd(){if(!META||META.status!=='running'||!FOOD.length)return;if(FOOD.every(it=>CL[it.id])){await net.setMeta({status:'ended'})}}
 
 /* ===== Ljud (skapas i webbläsaren, inga ljudfiler) ===== */
@@ -529,8 +530,9 @@ for(const ev of['pointerdown','touchend','keydown'])document.addEventListener(ev
 /* ===== Händelser ===== */
 function onEvent(e){if(!e||(+e.t)<joinT-3000)return;
  if(e.ty==='throw'){onThrowEvent(e);return}
- if(e.ty==='miss'){if(e.p===me)toast(`${esc(nameOf(e.q))} väjde undan!`);return}
- if(e.ty==='hit'||e.ty==='hit2'){if(e.ty==='hit')throwFx(e.p,e.q);if(e.q===me){try{navigator.vibrate&&navigator.vibrate([200,80,200])}catch(x){}}
+ if(e.ty==='miss'||e.ty==='hit2'){try{const d=JSON.parse(e.pl||'{}');if(d.k)delete THR[d.k]}catch(x){}}
+ if(e.ty==='miss'){let why='';try{why=JSON.parse(e.pl||'{}').why}catch(x){}if(e.p===me)toast(why==='skydd'?`${esc(nameOf(e.q))} var skyddad – inget hände.`:`${esc(nameOf(e.q))} väjde undan!`);return}
+ if(e.ty==='hit'||e.ty==='hit2'){if(e.ty==='hit')throwFx(e.p,e.q);if(e.p===me&&e.ty==='hit2')SND.coins(4);if(e.q===me){try{navigator.vibrate&&navigator.vibrate([200,80,200])}catch(x){}}
   toast(`<svg><use href="#i-sprit"/></svg><span><b>${esc(nameOf(e.p))}</b> sövde <b>${esc(nameOf(e.q))}</b> med mygg-sprit!</span>`)}
  else if(e.ty==='mhit'){if(e.q===me){SND.laugh();try{navigator.vibrate&&navigator.vibrate([300])}catch(x){}}toast(`<svg viewBox="0 0 48 60"><use href="#i-mon"/></svg><span>Tunnan-monstret tog <b>${esc(nameOf(e.q))}</b>! Zzz…</span>`)}
  else if(e.ty==='find'&&e.p!==me)toast(`<svg><use href="#i-tunna"/></svg><span><b>${esc(nameOf(e.p))}</b> hittade en silltunna vid ${esc(e.pl)}!</span>`)}
@@ -776,15 +778,18 @@ function checkBump(now){if(!SV.active||SV.edge<0)return;const p=PL[me];if(!p||as
   if(bl){const L=locAt(m,now);SV.keep=true;const nm={sx:L.x,sy:L.y,se:ei,sn:null,route:[],t0:now,sp:SPEED,ln:m.ln,le:m.le};p.m=nm;net.updatePlayer(me,{m:nm});SV.blocked={hd,dest:m.route[m.route.length-1],dir,since:now};SND.bump();if(now-(SV.bumpToast||0)>4000){SV.bumpToast=now;toast(`Krock med ${esc(PL[bl].name)}! Byt fil för att komma förbi.`)}}}
  else if(SV.blocked){if(now-SV.blocked.since>12000){SV.blocked=null;return}if(!blockerAhead(SV.blocked.dir)&&now-SV.blocked.since>250){const b=SV.blocked;SV.blocked=null;moveVia(b.hd,b.dest)}}}
 // mygg-sprit i luften (gatuvyn)
+const THR={};
+function throwFallback(k){const th=THR[k];if(!th)return;delete THR[k];const now=T(),p=PL[th.q];if(!p||asleep(p,now)||(p.z&&p.z.i>now))return;
+ if(edgeOfPlayer(th.q,now)!==th.ei||Math.abs(laneOfPlayer(th.q,th.ei)-th.ln)>=.38)return;const z={s:Math.round(now+SLEEP),i:Math.round(now+SLEEP+15000),by:th.by};p.z=z;net.updatePlayer(th.q,{z});net.event({ty:'hit2',p:th.by,q:th.q,t:now,pl:JSON.stringify({k})})}
 const FLY=[];
 function onThrowEvent(e){let d={};try{d=JSON.parse(e.pl||'{}')}catch(x){}const ft=d.ft||900,t1=(+e.t)+ft,now=T();if(now-(+e.t)>4000)return;
  FLY.push({p:e.p,q:e.q,ln:d.ln||0,ei:d.ei,t0:+e.t,t1});throwFx(e.p,e.q);
  if(e.q===me){SND.whoosh();toast(`<svg><use href="#i-sprit"/></svg><span><b>${esc(nameOf(e.p))}</b> kastar mygg-sprit på dig – väj!</span>`)}
- if(controlled().includes(e.q))setTimeout(()=>resolveThrow(e.p,e.q,d.ln||0,d.ei),Math.max(0,t1-now))}
-function resolveThrow(by,q,ln,ei){const now=T(),p=PL[q];if(!p||asleep(p,now)||(p.z&&p.z.i>now))return;
+ if(controlled().includes(e.q))setTimeout(()=>resolveThrow(e.p,e.q,d.ln||0,d.ei,d.k),Math.max(0,t1-now))}
+function resolveThrow(by,q,ln,ei,k){const now=T(),p=PL[q],pk=JSON.stringify({k});if(!p)return;if(asleep(p,now)||(p.z&&p.z.i>now)){net.event({ty:'miss',p:by,q,t:now,pl:JSON.stringify({k,why:'skydd'})});return}
  let myLn;if(q===me&&SV.active&&SV.edge>=0&&SV.edge===ei)myLn=laneE();else if(q===me&&edgeOfPlayer(me,now)===ei&&!SV.active)myLn=ln;else if(q!==me)myLn=hashLane(q);else myLn=99;
- if(Math.abs(myLn-ln)<.38){const z={s:Math.round(now+SLEEP),i:Math.round(now+SLEEP+15000),by};p.z=z;net.updatePlayer(q,{z});net.event({ty:'hit2',p:by,q,t:now})}
- else if(q===me){toast('Du väjde undan mygg-spriten! 😅'.replace(' 😅',''),'good');net.event({ty:'miss',p:by,q,t:now})}}
+ if(Math.abs(myLn-ln)<.38){const z={s:Math.round(now+SLEEP),i:Math.round(now+SLEEP+15000),by};p.z=z;net.updatePlayer(q,{z});net.event({ty:'hit2',p:by,q,t:now,pl:pk})}
+ else{if(q===me)toast('Du väjde undan mygg-spriten!','good');net.event({ty:'miss',p:by,q,t:now,pl:pk})}}
 function drawFly(g,now,sOf,Y,lnX,e){for(const f of FLY){if(f.ei!==SV.edge||now>f.t1+50)continue;const A=PL[f.p],B=PL[f.q];if(!A||!B)continue;const a=dispPos(A,now),b=dispPos(B,now),sa=sOf(a.x,a.y),sb=sOf(b.x,b.y);if(sa==null||sb==null)continue;
  const flip=SV.down===e.a?1:-1,xa=f.p===me?lnX(SV.latV):lnX(laneOfPlayer(f.p,SV.edge)*flip),xb=lnX(f.ln*flip),ya=Y(sa),yb=Y(sb),k=Math.min(1,Math.max(0,(now-f.t0)/(f.t1-f.t0)));
  const x=xa+(xb-xa)*k,y=ya+(yb-ya)*k-Math.sin(k*Math.PI)*60;g.fillStyle='rgba(30,90,30,.25)';g.beginPath();g.ellipse(xb,yb+6,16*k+4,6*k+2,0,0,7);g.fill();
@@ -865,7 +870,7 @@ function hudTick(now){if(now-hudT<250)return;hudT=now;const on=!!(META&&META.sta
  const left=FOOD.filter(it=>!CL[it.id]).length;$('#left').textContent=hintOn(now)?`Slutspurt! ${left} kvar`:`${left} skatter kvar`;
  const c=$('#count'),cd=Math.ceil((META.startAt-now)/1000);if(META.status==='running'&&cd>0&&cd<=5){c.classList.add('on');c.textContent=cd}else if(META.status==='running'&&now-META.startAt<900){c.classList.add('on');c.textContent='Kör!'}else c.classList.remove('on');
  const p=PL[me],sl=asleep(p,now);$('#sleep').classList.toggle('on',!!sl);if(sl){$('#slT').textContent=Math.ceil((p.z.s-now)/1000);$('#slBy').textContent=p.z.by==='monster'?'Tunnan-monstret fick tag på dig!':`${p.z.by&&PL[p.z.by]?PL[p.z.by].name:'Någon'} kastade mygg-sprit på dig!`}
- $('#bThrow').disabled=st(me).sprit<1||META.status!=='running';renderSheet(now)}
+ $('#bThrow').disabled=st(me).sprit<1||META.status!=='running'||!SV.shown;renderSheet(now)}
 let sheetKey='';
 function renderSheet(now){const p=PL[me];if(!p)return;const m=p.m||startM(),L=locAt(m,now),moving=!posAt(m,now).done;let key,html='';
  if(META.status!=='running'){key='x';html=META.status==='ended'?`<div class="hint">Spelet är slut. Öppna topplistan!</div>`:''}
@@ -907,10 +912,11 @@ function lbRows(){return Object.keys(PL).sort((a,b)=>st(b).score-st(a).score||(P
 $('#bLb').onclick=()=>openModal(`<h2>Topplista</h2><div class="lb">${lbRows()}</div>`);
 $('#bThrow').onclick=()=>openThrow(null);
 function openThrow(target){const now=T(),n=st(me).sprit;const others=Object.keys(PL).filter(id=>id!==me);
- if(target&&n<1){toast(`Det där är ${esc(PL[target].name)}. Hitta mygg-sprit på genvägarna för att kunna söva hen!`);return}
- const row=id=>{const p=PL[id],sl=asleep(p,now),im=p.z&&p.z.i>now&&!sl,ss=sameStreet(me,id,now);return`<div class="r">${avHTML(id,40)}<div class="n">${esc(p.name)}<small>${sl?'Sover':im?'Skyddad en stund':ss?'På din gata!':'Inte på din gata'}</small></div><button class="btn" data-t="${esc(id)}"${sl||im||n<1||!ss?' disabled':''}>Kasta</button></div>`};
- const list=(target?[target,...others.filter(x=>x!==target)]:others).sort((a,b)=>sameStreet(me,b,now)-sameStreet(me,a,now));
- openModal(`<h2>Kasta mygg-sprit</h2><p class="mut">${n<1?'Du har ingen mygg-sprit. Den finns bara på genvägarna: de streckade stigarna och båtarna.':`Du har ${n} st. Du kan bara kasta på någon som är på samma gata som du. Spriten flyger mot hen – den som är snabb kan väja undan. Den som träffas somnar i 20 sekunder.`}</p><div class="lb">${list.map(row).join('')||'<p>Inga andra spelare än.</p>'}</div>`);
+ if(!SV.shown){toast('Du kan bara kasta mygg-sprit när du är ute på en gata.');return}
+ if(target&&n<1){toast(`Det där är ${esc(PL[target].name)}. Hitta mygg-sprit bakom stjärnorna för att kunna söva hen!`);return}
+ const row=id=>{const p=PL[id],sl=asleep(p,now),im=p.z&&p.z.i>now&&!sl,ss=canHit(me,id,now);return`<div class="r">${avHTML(id,40)}<div class="n">${esc(p.name)}<small>${sl?'Sover':im?'Skyddad en stund':ss?'På din gata!':'Inte på din gata'}</small></div><button class="btn" data-t="${esc(id)}"${sl||im||n<1||!ss?' disabled':''}>Kasta</button></div>`};
+ const list=(target?[target,...others.filter(x=>x!==target)]:others).sort((a,b)=>canHit(me,b,now)-canHit(me,a,now));
+ openModal(`<h2>Kasta mygg-sprit</h2><p class="mut">${n<1?'Du har ingen mygg-sprit. Den ligger gömd bakom stjärnorna på gatorna.':`Du har ${n} st. Du kan bara kasta på någon som är på samma gata som du. Spriten flyger mot hen – den som är snabb kan väja undan. Den som träffas somnar i 20 sekunder.`}</p><div class="lb">${list.map(row).join('')||'<p>Inga andra spelare än.</p>'}</div>`);
  $('#mBody').querySelectorAll('[data-t]').forEach(b=>b.onclick=async()=>{closeModal();await throwAt(me,b.dataset.t)})}
 $('#gear').onclick=()=>openMenu();$('#lbMenu').onclick=()=>openMenu();
 function openMenu(){const s=META?.status||'lobby',myBots=BOTS.length;
@@ -982,7 +988,7 @@ const BS={};
 function saveBots(){ls.set('tunnan-bots-'+GID,JSON.stringify(BOTS))}
 async function addBots(){const nm=['Måsen Måns','Sälen Selma','Krabban Kurt','Tången Tove','Fyr-Frida','Snipan Sixten'];for(let i=0;i<3;i++){const id='b'+Math.random().toString(36).slice(2,9);BOTS.push(id);saveBots();await net.upsertPlayer(id,{name:nm[(BOTS.length-1)%nm.length],color:COLORS[(Object.keys(PL).length+i+3)%COLORS.length],bot:true,m:startM(),z:null,joined:T()})}toast('3 testspelare har gått med')}
 function botsTick(now){for(const id of BOTS){const p=PL[id];if(!p)continue;const b=BS[id]||(BS[id]={next:0,searched:false});if(now<b.next)continue;b.next=now+1200+Math.random()*1500;if(asleep(p,now))continue;const m=p.m||startM();if(!posAt(m,now).done)continue;const L=locAt(m,now);
-  if(st(id).sprit>0&&Math.random()<.25){const t=Object.keys(PL).filter(x=>x!==id&&!(PL[x].z&&PL[x].z.i>now)&&sameStreet(id,x,now));if(t.length){throwAt(id,t[Math.floor(Math.random()*t.length)]);continue}}
+  if(st(id).sprit>0&&Math.random()<.25){const t=Object.keys(PL).filter(x=>x!==id&&!(PL[x].z&&PL[x].z.i>now)&&canHit(id,x,now));if(t.length){throwAt(id,t[Math.floor(Math.random()*t.length)]);continue}}
   if(L.node&&NODES[L.node].place&&!b.searched){b.searched=true;b.next=now+SEARCHMS+300;const pl=L.node,sp=Math.floor(Math.random()*4);setTimeout(()=>search(id,pl,sp),SEARCHMS);continue}
   b.searched=false;const ids=Object.keys(NODES),t=Math.random()<.75?PLACES[Math.floor(Math.random()*PLACES.length)].id:ids[Math.floor(Math.random()*ids.length)];moveTo(id,t)}}
 
